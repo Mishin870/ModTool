@@ -43,9 +43,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Unity\Hub\Editor\5.6.0f3\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>D:\Unity\2020.1.12f1\Editor\Data\Managed\UnityEditor.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Unity\Hub\Editor\5.6.0f3\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>D:\Unity\2020.1.12f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
