@@ -41,6 +41,11 @@
             Stores the exporter's settings.
             </summary>
         </member>
+        <member name="P:ModTool.Exporting.Editor.ExportSettings.id">
+            <summary>
+            The Mod's unique identifier.
+            </summary>
+        </member>
         <member name="P:ModTool.Exporting.Editor.ExportSettings.name">
             <summary>
             The Mod's name.

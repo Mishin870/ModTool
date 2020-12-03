@@ -9,94 +9,91 @@ namespace ModTool.Shared.Editor {
     /// <summary>
     /// A set of utilities for handling assets.
     /// </summary>
-    public class AssetUtility {
+    public static class AssetUtility {
         /// <summary>
         /// Finds and returns the directory where ModTool is located.
         /// </summary>
         /// <returns>The directory where ModTool is located.</returns>
         public static string GetModToolDirectory() {
-            var location = typeof(ModInfo).Assembly.Location;
+            var Location = typeof(ModInfo).Assembly.Location;
+            var ModToolDirectory = Path.GetDirectoryName(Location);
 
-            var modToolDirectory = Path.GetDirectoryName(location);
+            if (!Directory.Exists(ModToolDirectory))
+                ModToolDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
 
-            if (!Directory.Exists(modToolDirectory))
-                modToolDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
-
-            return GetRelativePath(modToolDirectory);
+            return GetRelativePath(ModToolDirectory);
         }
 
         /// <summary>
         /// Get the relative path for an absolute path.
         /// </summary>
-        /// <param name="path">The absolute path.</param>
+        /// <param name="Path">The absolute path.</param>
         /// <returns>The relative path.</returns>
-        public static string GetRelativePath(string path) {
-            var currentDirectory = Directory.GetCurrentDirectory();
+        public static string GetRelativePath(string Path) {
+            var CurrentDirectory = Directory.GetCurrentDirectory();
+            var PathUri = new Uri(Path);
 
-            var pathUri = new Uri(path);
+            if (!CurrentDirectory.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                CurrentDirectory += System.IO.Path.DirectorySeparatorChar;
 
-            if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                currentDirectory += Path.DirectorySeparatorChar;
+            var DirectoryUri = new Uri(CurrentDirectory);
+            var RelativePath = Uri.UnescapeDataString(DirectoryUri.MakeRelativeUri(PathUri).ToString()
+                .Replace('/', System.IO.Path.DirectorySeparatorChar));
 
-            var directoryUri = new Uri(currentDirectory);
-
-            var relativePath = Uri.UnescapeDataString(directoryUri.MakeRelativeUri(pathUri).ToString()
-                .Replace('/', Path.DirectorySeparatorChar));
-
-            return relativePath;
+            return RelativePath;
         }
 
         /// <summary>
         /// Get all asset paths for assets that match the filter.
         /// </summary>
-        /// <param name="filter">The filter string can contain search data for: names, asset labels and types (class names).</param>
+        /// <param name="Filter">The filter string can contain search data for: names, asset labels and types (class names).</param>
         /// <returns>A list of asset paths</returns>
-        public static List<string> GetAssets(string filter) {
-            var assetPaths = new List<string>();
+        public static IEnumerable<string> GetAssets(string Filter) {
+            var AssetPaths = new List<string>();
+            var AssetGuids = AssetDatabase.FindAssets(Filter);
 
-            var assetGuids = AssetDatabase.FindAssets(filter);
+            foreach (var Guid in AssetGuids) {
+                var AssetPath = AssetDatabase.GUIDToAssetPath(Guid);
 
-            foreach (var guid in assetGuids) {
-                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-
-                if (assetPath.Contains("ModTool"))
+                if (AssetPath.Contains("ModTool"))
                     continue;
 
-                if (assetPath.Contains("/Editor/"))
+                if (AssetPath.Contains("/Editor/"))
                     continue;
 
-                if (assetPath.StartsWith("Packages"))
+                if (AssetPath.StartsWith("Packages"))
                     continue;
 
                 //NOTE: AssetDatabase.FindAssets() can contain duplicates for some reason
-                if (assetPaths.Contains(assetPath))
+                if (AssetPaths.Contains(AssetPath))
                     continue;
 
-                assetPaths.Add(assetPath);
+                AssetPaths.Add(AssetPath);
             }
 
-            return assetPaths;
+            return AssetPaths;
         }
 
         /// <summary>
         /// Create an asset for a ScriptableObject in a ModTool Resources directory.
         /// </summary>
-        /// <param name="scriptableObject">A ScriptableObject instance.</param>
-        public static void CreateAsset(ScriptableObject scriptableObject) {
-            var resourcesParentDirectory = GetModToolDirectory();
-            var resourcesDirectory = "";
+        /// <param name="ScriptableObject">A ScriptableObject instance.</param>
+        public static void CreateAsset(ScriptableObject ScriptableObject) {
+            var ResourcesParentDirectory = GetModToolDirectory();
+            var ResourcesDirectory = "";
 
-            resourcesDirectory = Directory
-                .GetDirectories(resourcesParentDirectory, "Resources", SearchOption.AllDirectories).FirstOrDefault();
+            ResourcesDirectory = Directory.GetDirectories(ResourcesParentDirectory,
+                "Resources", SearchOption.AllDirectories).FirstOrDefault();
 
-            if (string.IsNullOrEmpty(resourcesDirectory)) {
-                resourcesDirectory = Path.Combine(resourcesParentDirectory, "Resources");
-                Directory.CreateDirectory(resourcesDirectory);
+            if (string.IsNullOrEmpty(ResourcesDirectory)) {
+                ResourcesDirectory = System.IO.Path.Combine(ResourcesParentDirectory, "Resources");
+                Directory.CreateDirectory(ResourcesDirectory);
             }
 
-            var path = Path.Combine(resourcesDirectory, scriptableObject.GetType().Name + ".asset");
+            var Path = System.IO.Path.Combine(ResourcesDirectory,
+                ScriptableObject.GetType().Name + ".asset");
 
-            AssetDatabase.CreateAsset(scriptableObject, path);
+            AssetDatabase.CreateAsset(ScriptableObject, Path);
         }
     }
 }

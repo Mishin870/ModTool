@@ -4,65 +4,56 @@ using UnityEngine;
 
 namespace ModTool.Shared {
     /// <summary>
-    /// Class that stores a Mod's name, author, description, version, path and supported platforms.
+    /// Class that stores a Mod's id, name, author, description, version, path and supported platforms.
     /// </summary>
     [Serializable]
     public class ModInfo {
         /// <summary>
+        /// Unique identifier
+        /// </summary>
+        public string id => _id;
+
+        /// <summary>
         /// Name
         /// </summary>
-        public string name {
-            get { return _name; }
-        }
+        public string name => _name;
 
         /// <summary>
         /// Supported platforms for this mod.
         /// </summary>
-        public ModPlatform platforms {
-            get { return _platforms; }
-        }
+        public ModPlatform platforms => _platforms;
 
         /// <summary>
         /// The Mod's available content types.
         /// </summary>
-        public ModContent content {
-            get { return _content; }
-        }
+        public ModContent content => _content;
 
         /// <summary>
         /// Mod author.
         /// </summary>
-        public string author {
-            get { return _author; }
-        }
+        public string author => _author;
 
         /// <summary>
         /// Mod description.
         /// </summary>
-        public string description {
-            get { return _description; }
-        }
+        public string description => _description;
 
         /// <summary>
         /// Mod version.
         /// </summary>
-        public string version {
-            get { return _version; }
-        }
+        public string version => _version;
 
         /// <summary>
         /// The version of Unity that was used to export this mod.
         /// </summary>
-        public string unityVersion {
-            get { return _unityVersion; }
-        }
+        public string unityVersion => _unityVersion;
 
         /// <summary>
         /// Should this mod be enabled.
         /// </summary>
         public bool isEnabled {
-            get { return _isEnabled; }
-            set { _isEnabled = value; }
+            get => _isEnabled;
+            set => _isEnabled = value;
         }
 
         /// <summary>
@@ -70,6 +61,8 @@ namespace ModTool.Shared {
         /// </summary>
         public string path { get; private set; }
 
+        [SerializeField] private string _id;
+        
         [SerializeField] private string _name;
 
         [SerializeField] private string _author;
@@ -89,6 +82,7 @@ namespace ModTool.Shared {
         /// <summary>
         /// Initialize a new ModInfo.
         /// </summary>
+        /// <param name="id">The Mod's unique identifier.</param>
         /// <param name="name">The Mod's name.</param>
         /// <param name="author">The Mod's author.</param>
         /// <param name="description">The Mod's description.</param>
@@ -97,6 +91,7 @@ namespace ModTool.Shared {
         /// <param name="version">The Mod's version</param>
         /// <param name="unityVersion"> The version of Unity that the Mod was exported with.</param>
         public ModInfo(
+            string id,
             string name,
             string author,
             string description,
@@ -107,6 +102,7 @@ namespace ModTool.Shared {
             _author = author;
             _description = description;
             _name = name;
+            _id = id;
             _platforms = platforms;
             _content = content;
             _version = version;
@@ -145,7 +141,6 @@ namespace ModTool.Shared {
             if (File.Exists(path)) {
                 try {
                     var json = File.ReadAllText(path);
-
                     var modInfo = JsonUtility.FromJson<ModInfo>(json);
 
                     modInfo.path = path;

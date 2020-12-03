@@ -8,7 +8,7 @@ namespace ModTool.Exporting.Editor {
         [MenuItem("Tools/ModTool/Export Mod")]
         public static void ShowWindow() {
             var window = GetWindow<ExporterEditorWindow>();
-            window.maxSize = new Vector2(385f, 265);
+            // window.maxSize = new Vector2(385f, 265);
             window.minSize = new Vector2(300f, 265);
             window.titleContent = new GUIContent("Mod Exporter");
         }

@@ -8,9 +8,17 @@ namespace ModTool.Exporting.Editor {
     /// </summary>
     public class ExportSettings : EditorScriptableSingleton<ExportSettings> {
         /// <summary>
+        /// The Mod's unique identifier.
+        /// </summary>
+        public static string id {
+            get { return instance._id; }
+            set { instance._id = value; }
+        }
+        
+        /// <summary>
         /// The Mod's name.
         /// </summary>
-        public static new string name {
+        public new static string name {
             get { return instance._name; }
             set { instance._name = value; }
         }
@@ -63,6 +71,8 @@ namespace ModTool.Exporting.Editor {
             set { instance._outputDirectory = value; }
         }
 
+        [SerializeField] private string _id;
+        
         [SerializeField] private string _name;
 
         [SerializeField] private string _author;

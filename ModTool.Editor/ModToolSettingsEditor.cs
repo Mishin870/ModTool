@@ -21,10 +21,10 @@ namespace ModTool.Editor {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
             var supportedPlatforms =
-                (ModPlatform) EditorGUILayout.EnumMaskField("Supported Platforms",
+                (ModPlatform) EditorGUILayout.EnumFlagsField("Supported Platforms",
                     (ModPlatform) _supportedPlatforms.intValue);
             var supportedContent =
-                (ModContent) EditorGUILayout.EnumMaskField("Supported Content",
+                (ModContent) EditorGUILayout.EnumFlagsField("Supported Content",
                     (ModContent) _supportedContent.intValue);
             var logLevel = (LogLevel) EditorGUILayout.EnumPopup("Log Level", (LogLevel) _logLevel.intValue);
 

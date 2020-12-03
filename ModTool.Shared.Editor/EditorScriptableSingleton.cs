@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ModTool.Shared.Editor {
     public abstract class EditorScriptableSingleton<T> : ScriptableObject where T : EditorScriptableSingleton<T> {

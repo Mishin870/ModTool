@@ -22,6 +22,7 @@ namespace ModTool.Shared {
         /// Find dll files in a directory and its sub directories.
         /// </summary>
         /// <param name="path">The directory to search in.</param>
+        /// <param name="assemblyFilter">The filter mode for finding assemblies.</param>
         /// <returns>A List of paths to found Assemblies.</returns>
         public static List<string> GetAssemblies(string path, AssemblyFilter assemblyFilter) {
             var assemblies = new List<string>();

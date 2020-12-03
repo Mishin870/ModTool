@@ -59,9 +59,7 @@ namespace ModTool {
         }
 
         protected override void UnloadResources() {
-            if (scene.HasValue)
-                scene.Value.Unload();
-
+            scene?.Unload();
             scene = null;
         }
 

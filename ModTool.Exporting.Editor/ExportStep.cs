@@ -42,9 +42,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class StartExport : ExportStep {
-        public override string message {
-            get { return "Starting Export"; }
-        }
+        public override string message => "Starting Export";
 
         internal override void Execute(ExportData data) {
             data.loadedScene = SceneManager.GetActiveScene().path;
@@ -59,9 +57,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class Verify : ExportStep {
-        public override string message {
-            get { return "Verifying Project"; }
-        }
+        public override string message => "Verifying Project";
 
         internal override void Execute(ExportData data) {
             CheckSerializationMode();
@@ -140,9 +136,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class GetContent : ExportStep {
-        public override string message {
-            get { return "Finding Content"; }
-        }
+        public override string message => "Finding Content";
 
         internal override void Execute(ExportData data) {
             data.assemblies = GetAssemblies();
@@ -185,9 +179,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class CreateBackup : ExportStep {
-        public override string message {
-            get { return "Creating Backup"; }
-        }
+        public override string message => "Creating Backup";
 
         internal override void Execute(ExportData data) {
             AssetDatabase.SaveAssets();
@@ -217,9 +209,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class ImportScripts : ExportStep {
-        public override string message {
-            get { return "Importing Script Assemblies"; }
-        }
+        public override string message => "Importing Script Assemblies";
 
         internal override void Execute(ExportData data) {
             if ((data.content & ModContent.Code) != ModContent.Code)
@@ -285,9 +275,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class UpdateAssets : ExportStep {
-        public override string message {
-            get { return "Updating Assets"; }
-        }
+        public override string message => "Updating Assets";
 
         internal override void Execute(ExportData data) {
             var allAssets = data.assets.Concat(data.scenes);
@@ -384,9 +372,7 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class Export : ExportStep {
-        public override string message {
-            get { return "Exporting Files"; }
-        }
+        public override string message => "Exporting Files";
 
         private string tempModDirectory;
         private string modDirectory;
@@ -411,6 +397,7 @@ namespace ModTool.Exporting.Editor {
             BuildAssetBundles(platforms);
 
             var modInfo = new ModInfo(
+                ExportSettings.id,
                 ExportSettings.name,
                 ExportSettings.author,
                 ExportSettings.description,
@@ -419,7 +406,7 @@ namespace ModTool.Exporting.Editor {
                 platforms,
                 data.content);
 
-            ModInfo.Save(Path.Combine(tempModDirectory, ExportSettings.name + ".info"), modInfo);
+            ModInfo.Save(Path.Combine(tempModDirectory, ExportSettings.id + ".info"), modInfo);
 
             CopyToOutput();
 
@@ -466,14 +453,12 @@ namespace ModTool.Exporting.Editor {
     }
 
     public class RestoreProject : ExportStep {
-        public override string message {
-            get { return "Restoring Project"; }
-        }
+        public override string message => "Restoring Project";
 
         internal override void Execute(ExportData data) {
             foreach (var scriptAssembly in data.scriptAssemblies)
                 scriptAssembly.Delete();
-
+            
             foreach (var asset in data.assets)
                 asset.Restore();
 

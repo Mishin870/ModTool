@@ -13,7 +13,7 @@ namespace ModTool {
         /// <param name="self">A Scene instance.</param>
         public static void Unload(this Scene self) {
             if (self.isLoaded && self.IsValid()) {
-                SceneManager.UnloadScene(self.name);
+                SceneManager.UnloadSceneAsync(self.name);
             }
         }
 
