@@ -5,19 +5,16 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-namespace ModTool.Shared.Editor
-{
+namespace ModTool.Shared.Editor {
     /// <summary>
     /// A set of utilities for handling assets.
     /// </summary>
-    public class AssetUtility
-    {
+    public class AssetUtility {
         /// <summary>
         /// Finds and returns the directory where ModTool is located.
         /// </summary>
         /// <returns>The directory where ModTool is located.</returns>
-        public static string GetModToolDirectory()
-        {
+        public static string GetModToolDirectory() {
             string location = typeof(ModInfo).Assembly.Location;
 
             string modToolDirectory = Path.GetDirectoryName(location);
@@ -33,8 +30,7 @@ namespace ModTool.Shared.Editor
         /// </summary>
         /// <param name="path">The absolute path.</param>
         /// <returns>The relative path.</returns>
-        public static string GetRelativePath(string path)
-        {
+        public static string GetRelativePath(string path) {
             string currentDirectory = Directory.GetCurrentDirectory();
 
             Uri pathUri = new Uri(path);
@@ -44,7 +40,8 @@ namespace ModTool.Shared.Editor
 
             Uri directoryUri = new Uri(currentDirectory);
 
-            string relativePath = Uri.UnescapeDataString(directoryUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+            string relativePath = Uri.UnescapeDataString(directoryUri.MakeRelativeUri(pathUri).ToString()
+                .Replace('/', Path.DirectorySeparatorChar));
 
             return relativePath;
         }
@@ -54,14 +51,12 @@ namespace ModTool.Shared.Editor
         /// </summary>
         /// <param name="filter">The filter string can contain search data for: names, asset labels and types (class names).</param>
         /// <returns>A list of asset paths</returns>
-        public static List<string> GetAssets(string filter)
-        {
+        public static List<string> GetAssets(string filter) {
             List<string> assetPaths = new List<string>();
 
             string[] assetGuids = AssetDatabase.FindAssets(filter);
 
-            foreach (string guid in assetGuids)
-            {
+            foreach (string guid in assetGuids) {
                 string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
                 if (assetPath.Contains("ModTool"))
@@ -87,15 +82,14 @@ namespace ModTool.Shared.Editor
         /// Create an asset for a ScriptableObject in a ModTool Resources directory.
         /// </summary>
         /// <param name="scriptableObject">A ScriptableObject instance.</param>
-        public static void CreateAsset(ScriptableObject scriptableObject)
-        {
+        public static void CreateAsset(ScriptableObject scriptableObject) {
             string resourcesParentDirectory = GetModToolDirectory();
             string resourcesDirectory = "";
 
-            resourcesDirectory = Directory.GetDirectories(resourcesParentDirectory, "Resources", SearchOption.AllDirectories).FirstOrDefault();
+            resourcesDirectory = Directory
+                .GetDirectories(resourcesParentDirectory, "Resources", SearchOption.AllDirectories).FirstOrDefault();
 
-            if (string.IsNullOrEmpty(resourcesDirectory))
-            {
+            if (string.IsNullOrEmpty(resourcesDirectory)) {
                 resourcesDirectory = Path.Combine(resourcesParentDirectory, "Resources");
                 Directory.CreateDirectory(resourcesDirectory);
             }
@@ -103,6 +97,6 @@ namespace ModTool.Shared.Editor
             string path = Path.Combine(resourcesDirectory, scriptableObject.GetType().Name + ".asset");
 
             AssetDatabase.CreateAsset(scriptableObject, path);
-        }        
+        }
     }
 }

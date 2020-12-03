@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ModTool.Shared
-{
+namespace ModTool.Shared {
     /// <summary>
     /// Represents a platform or a combination of platforms.
     /// </summary>
     [Flags]
     [Serializable]
-    public enum ModPlatform { Windows = 1, Linux = 2, OSX = 4, Android = 8 }
+    public enum ModPlatform {
+        Windows = 1,
+        Linux = 2,
+        OSX = 4,
+        Android = 8
+    }
 
     /// <summary>
     /// Extension methods for ModPlatform.
     /// </summary>
-    public static class ModPlatformExtensions
-    {
+    public static class ModPlatformExtensions {
         /// <summary>
         /// Does this ModPlatform include the equivalent RuntimePlatform?
         /// </summary>
         /// <param name="self">A ModPlatform instance.</param>
         /// <param name="runtimePlatform">A RuntimePlatform.</param>
         /// <returns>True if the ModPlatform includes the equivalent RuntimePlatform.</returns>
-        public static bool HasRuntimePlatform(this ModPlatform self, RuntimePlatform runtimePlatform)
-        {
-            switch (runtimePlatform)
-            {
+        public static bool HasRuntimePlatform(this ModPlatform self, RuntimePlatform runtimePlatform) {
+            switch (runtimePlatform) {
                 case RuntimePlatform.WindowsPlayer:
                     if ((self & ModPlatform.Windows) == ModPlatform.Windows)
                         return true;
@@ -54,16 +55,14 @@ namespace ModTool.Shared
 
             return false;
         }
-        
+
         /// <summary>
         /// Get the equivalent ModPlatform for this RuntimePlatform.
         /// </summary>
         /// <param name="self">A RuntimePlatform.</param>
         /// <returns>The equivalent ModPlatform.</returns>
-        public static ModPlatform GetModPlatform(this RuntimePlatform self)
-        {
-            switch(self)
-            {
+        public static ModPlatform GetModPlatform(this RuntimePlatform self) {
+            switch (self) {
                 case RuntimePlatform.WindowsPlayer:
                     return ModPlatform.Windows;
                 case RuntimePlatform.WindowsEditor:
@@ -75,7 +74,7 @@ namespace ModTool.Shared
                 case RuntimePlatform.OSXEditor:
                     return ModPlatform.OSX;
                 case RuntimePlatform.Android:
-                    return ModPlatform.Android;                    
+                    return ModPlatform.Android;
             }
 
             return 0;
@@ -86,14 +85,12 @@ namespace ModTool.Shared
         /// </summary>
         /// <param name="self">A ModPlatform instance.</param>
         /// <returns>A List of equivalent RuntimePlatforms.</returns>
-        public static List<RuntimePlatform> GetRuntimePlatforms(this ModPlatform self)
-        {
+        public static List<RuntimePlatform> GetRuntimePlatforms(this ModPlatform self) {
             List<RuntimePlatform> runtimePlatforms = new List<RuntimePlatform>();
 
             var values = Enum.GetValues(typeof(RuntimePlatform));
 
-            foreach (RuntimePlatform r in values)
-            {
+            foreach (RuntimePlatform r in values) {
                 if (self.HasRuntimePlatform(r))
                     runtimePlatforms.Add(r);
             }

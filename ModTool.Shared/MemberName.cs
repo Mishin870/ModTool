@@ -1,13 +1,11 @@
 ﻿using System;
 
-namespace ModTool.Shared.Verification
-{
+namespace ModTool.Shared.Verification {
     /// <summary>
     /// Represents a member's name.
     /// </summary>
     [Serializable]
-    public class MemberName
-    {
+    public class MemberName {
         /// <summary>
         /// The Type to which the member belongs.
         /// </summary>
@@ -23,15 +21,12 @@ namespace ModTool.Shared.Verification
         /// </summary>
         /// <param name="type">The Type to which the member belongs.</param>
         /// <param name="name">The member's name.</param>
-        public MemberName(TypeName type, string name)
-        {
+        public MemberName(TypeName type, string name) {
             this.type = type;
             this.name = name;
         }
 
-        public MemberName()
-        {
-
+        public MemberName() {
         }
-    }        
+    }
 }

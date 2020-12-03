@@ -3,21 +3,14 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-namespace ModTool.Exporting.Editor
-{
+namespace ModTool.Exporting.Editor {
     [Serializable]
-    public class Asset
-    {
+    public class Asset {
         public static readonly string backupDirectory = "Backup";
 
-        public string name
-        {
-            get
-            {
-                return Path.GetFileNameWithoutExtension(assetPath);
-            }
-            set
-            {
+        public string name {
+            get { return Path.GetFileNameWithoutExtension(assetPath); }
+            set {
                 string result = AssetDatabase.RenameAsset(assetPath, value);
 
                 if (string.IsNullOrEmpty(result))
@@ -25,14 +18,9 @@ namespace ModTool.Exporting.Editor
             }
         }
 
-        public string assetPath
-        {
-            get
-            {
-                return _assetPath;
-            }
-            set
-            {
+        public string assetPath {
+            get { return _assetPath; }
+            set {
                 string result = AssetDatabase.MoveAsset(assetPath, value);
 
                 if (string.IsNullOrEmpty(result))
@@ -40,37 +28,24 @@ namespace ModTool.Exporting.Editor
             }
         }
 
-        public string originalPath
-        {
-            get
-            {
-                return _originalPath;
-            }
+        public string originalPath {
+            get { return _originalPath; }
         }
 
-        public string backupPath
-        {
-            get
-            {
-                return _backupPath;
-            }
+        public string backupPath {
+            get { return _backupPath; }
         }
 
-        [SerializeField]
-        private string _assetPath;
-        [SerializeField]
-        private string _originalPath;
-        [SerializeField]
-        private string _backupPath;
+        [SerializeField] private string _assetPath;
+        [SerializeField] private string _originalPath;
+        [SerializeField] private string _backupPath;
 
-        public Asset(string assetPath)
-        {
+        public Asset(string assetPath) {
             _assetPath = assetPath;
             _originalPath = assetPath;
         }
 
-        public void Backup()
-        {
+        public void Backup() {
             _backupPath = originalPath.Replace("Assets", Asset.backupDirectory);
             string backupDirectory = Path.GetDirectoryName(backupPath);
 
@@ -82,20 +57,18 @@ namespace ModTool.Exporting.Editor
             _originalPath = assetPath;
         }
 
-        public void Restore()
-        {
+        public void Restore() {
             if (!File.Exists(backupPath))
                 return;
-                        
+
             AssetDatabase.DeleteAsset(assetPath);
 
             _assetPath = originalPath;
-            
+
             File.Copy(backupPath, assetPath, true);
         }
 
-        public void SetAssetBundle(string assetBundleName, string assetBundleVariant = "")
-        {
+        public void SetAssetBundle(string assetBundleName, string assetBundleVariant = "") {
             AssetImporter importer = AssetImporter.GetAtPath(assetPath);
 
             importer.assetBundleName = assetBundleName;
@@ -104,16 +77,14 @@ namespace ModTool.Exporting.Editor
                 importer.assetBundleVariant = assetBundleVariant;
         }
 
-        public void Move(string targetDirectory)
-        {
+        public void Move(string targetDirectory) {
             if (Path.GetDirectoryName(assetPath) == targetDirectory)
                 return;
 
             assetPath = Path.Combine(targetDirectory, Path.GetFileName(assetPath));
         }
 
-        public void Copy(string targetDirectory)
-        {
+        public void Copy(string targetDirectory) {
             if (Path.GetDirectoryName(assetPath) == targetDirectory)
                 return;
 
@@ -125,8 +96,7 @@ namespace ModTool.Exporting.Editor
             File.Copy(assetPath, targetPath);
         }
 
-        public void Delete()
-        {
+        public void Delete() {
             //Note: AssetDatabase.DeleteAsset updates the asset database, which can trigger an unwanted compilation/script reload
             File.Delete(assetPath);
         }

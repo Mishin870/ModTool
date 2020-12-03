@@ -4,25 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace ModTool
-{
+namespace ModTool {
     /// <summary>
     /// Represents a directory that is monitored for Mods.
     /// </summary>
-    public class ModSearchDirectory : IDisposable
-    {
+    public class ModSearchDirectory : IDisposable {
         /// <summary>
         /// Occurs when a new Mod has been found.
         /// </summary>
         public event Action<string> ModFound;
+
         /// <summary>
         /// Occurs when a Mod has been removed.
         /// </summary>
         public event Action<string> ModRemoved;
+
         /// <summary>
         /// Occurs when a change to a Mod's directory has been detected.
         /// </summary>
         public event Action<string> ModChanged;
+
         /// <summary>
         /// Occurs when any change was detected for any Mod in this search directory.
         /// </summary>
@@ -43,12 +44,11 @@ namespace ModTool
         /// Initialize a new ModSearchDirectory with a path.
         /// </summary>
         /// <param name="path">The path to the search directory.</param>
-        public ModSearchDirectory(string path)
-        {
+        public ModSearchDirectory(string path) {
             this.path = Path.GetFullPath(path);
 
-            if (!Directory.Exists(this.path))            
-                throw new DirectoryNotFoundException(this.path);            
+            if (!Directory.Exists(this.path))
+                throw new DirectoryNotFoundException(this.path);
 
             _modPaths = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
 
@@ -61,37 +61,31 @@ namespace ModTool
         /// <summary>
         /// Refresh the collection of mod paths. Remove all missing paths and add all new paths.
         /// </summary>
-        public void Refresh()
-        {
+        public void Refresh() {
             refreshEvent.Set();
         }
 
-        private void BackgroundRefresh()
-        {
+        private void BackgroundRefresh() {
             Thread.CurrentThread.IsBackground = true;
 
             refreshEvent.WaitOne();
 
-            while(!disposed)
-            {
+            while (!disposed) {
                 DoRefresh();
 
                 refreshEvent.WaitOne();
             }
         }
 
-        private void DoRefresh()
-        {
+        private void DoRefresh() {
             //LogUtility.LogDebug("Refreshing Mod search directory: " + path);
 
-            bool changed = false;            
+            bool changed = false;
 
             string[] modInfoPaths = GetModInfoPaths();
 
-            foreach (string path in _modPaths.Keys.ToArray())
-            {
-                if (!modInfoPaths.Contains(path))
-                {
+            foreach (string path in _modPaths.Keys.ToArray()) {
+                if (!modInfoPaths.Contains(path)) {
                     changed = true;
                     RemoveModPath(path);
                     continue;
@@ -102,18 +96,15 @@ namespace ModTool
                 long currentTicks = DateTime.Now.Ticks;
                 long lastWriteTime = _modPaths[path];
 
-                if (modDirectory.LastWriteTime.Ticks > lastWriteTime)
-                {
+                if (modDirectory.LastWriteTime.Ticks > lastWriteTime) {
                     changed = true;
                     _modPaths[path] = currentTicks;
                     UpdateModPath(path);
                     continue;
                 }
 
-                foreach (DirectoryInfo directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories))
-                {
-                    if (directory.LastWriteTime.Ticks > lastWriteTime)
-                    {
+                foreach (DirectoryInfo directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories)) {
+                    if (directory.LastWriteTime.Ticks > lastWriteTime) {
                         changed = true;
                         _modPaths[path] = currentTicks;
                         UpdateModPath(path);
@@ -121,13 +112,11 @@ namespace ModTool
                     }
                 }
 
-                foreach (FileInfo file in modDirectory.GetFiles("*", SearchOption.AllDirectories))
-                {
+                foreach (FileInfo file in modDirectory.GetFiles("*", SearchOption.AllDirectories)) {
                     if (file.Extension == ".info")
                         continue;
 
-                    if (file.LastWriteTime.Ticks > lastWriteTime)
-                    {
+                    if (file.LastWriteTime.Ticks > lastWriteTime) {
                         changed = true;
                         _modPaths[path] = currentTicks;
                         UpdateModPath(path);
@@ -136,10 +125,8 @@ namespace ModTool
                 }
             }
 
-            foreach (string path in modInfoPaths)
-            {
-                if (!_modPaths.ContainsKey(path))
-                {
+            foreach (string path in modInfoPaths) {
+                if (!_modPaths.ContainsKey(path)) {
                     changed = true;
                     AddModPath(path);
                 }
@@ -149,8 +136,7 @@ namespace ModTool
                 ModsChanged?.Invoke();
         }
 
-        private void AddModPath(string path)
-        {
+        private void AddModPath(string path) {
             if (_modPaths.ContainsKey(path))
                 return;
 
@@ -159,8 +145,7 @@ namespace ModTool
             ModFound?.Invoke(path);
         }
 
-        private void RemoveModPath(string path)
-        {
+        private void RemoveModPath(string path) {
             if (!_modPaths.ContainsKey(path))
                 return;
 
@@ -168,27 +153,23 @@ namespace ModTool
             ModRemoved?.Invoke(path);
         }
 
-        private void UpdateModPath(string path)
-        {
-            if (!File.Exists(path))
-            {
+        private void UpdateModPath(string path) {
+            if (!File.Exists(path)) {
                 RemoveModPath(path);
                 return;
             }
 
             ModChanged?.Invoke(path);
         }
-                
-        private string[] GetModInfoPaths()
-        {
+
+        private string[] GetModInfoPaths() {
             return Directory.GetFiles(path, "*.info", SearchOption.AllDirectories);
         }
 
         /// <summary>
         /// Releases all resources used by the ModSearchDirectory.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             ModFound = null;
             ModRemoved = null;
             ModChanged = null;

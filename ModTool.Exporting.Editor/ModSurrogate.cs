@@ -8,25 +8,20 @@ using ModTool.Interface;
 using ModTool.Shared;
 using ModTool.Shared.Editor;
 
-namespace ModTool.Exporting.Editor
-{
-    internal class ModSurrogateInitializer
-    {
+namespace ModTool.Exporting.Editor {
+    internal class ModSurrogateInitializer {
         [RuntimeInitializeOnLoadMethod]
-        private static void InitializeModSurrogate()
-        {
+        private static void InitializeModSurrogate() {
             List<GameObject> prefabs = new List<GameObject>();
             List<IResource> scenes = new List<IResource>();
 
             List<string> prefabPaths = AssetUtility.GetAssets("t:prefab");
-            foreach (string prefabPath in prefabPaths)
-            {
+            foreach (string prefabPath in prefabPaths) {
                 prefabs.Add(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
             }
 
             List<string> scenePaths = AssetUtility.GetAssets("t:scene");
-            foreach (string scenePath in scenePaths)
-            {
+            foreach (string scenePath in scenePaths) {
                 string sceneName = Path.GetFileNameWithoutExtension(scenePath);
                 scenes.Add(new ModSceneSurrogate(sceneName));
             }
@@ -38,36 +33,27 @@ namespace ModTool.Exporting.Editor
             InitializeModHandlers(contentHandler);
         }
 
-        private static void InitializeModHandlers(ContentHandler contentHandler)
-        {
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (Type type in assembly.GetTypes())
-                {
-                    if (typeof(IModHandler).IsAssignableFrom(type))
-                    {
+        private static void InitializeModHandlers(ContentHandler contentHandler) {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                foreach (Type type in assembly.GetTypes()) {
+                    if (typeof(IModHandler).IsAssignableFrom(type)) {
                         if (type.IsAbstract)
                             continue;
                         if (!type.IsClass)
                             continue;
 
-                        if (type.IsSubclassOf(typeof(Component)))
-                        {
-                            foreach(Component component in GetComponents(type))
-                            {
-                                ((IModHandler)component).OnLoaded(contentHandler);
+                        if (type.IsSubclassOf(typeof(Component))) {
+                            foreach (Component component in GetComponents(type)) {
+                                ((IModHandler) component).OnLoaded(contentHandler);
                             }
 
                             continue;
                         }
 
-                        try
-                        {
-                            IModHandler loadHandler = (IModHandler)Activator.CreateInstance(type);
+                        try {
+                            IModHandler loadHandler = (IModHandler) Activator.CreateInstance(type);
                             loadHandler.OnLoaded(contentHandler);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             if (e is MissingMethodException)
                                 LogUtility.LogWarning(e.Message);
                         }
@@ -76,12 +62,10 @@ namespace ModTool.Exporting.Editor
             }
         }
 
-        private static Component[] GetComponents(Type componentType)
-        {
+        private static Component[] GetComponents(Type componentType) {
             List<Component> components = new List<Component>();
 
-            foreach (Component component in Resources.FindObjectsOfTypeAll(componentType))
-            {
+            foreach (Component component in Resources.FindObjectsOfTypeAll(componentType)) {
                 if ((component.hideFlags & HideFlags.HideInInspector) == HideFlags.HideInInspector)
                     continue;
                 if ((component.hideFlags & HideFlags.NotEditable) == HideFlags.NotEditable)
@@ -99,61 +83,41 @@ namespace ModTool.Exporting.Editor
     /// <summary>
     /// A class that substitutes a Mod while testing the Mod in play-mode.
     /// </summary>
-    internal class ModSurrogate : IResource
-    {
+    internal class ModSurrogate : IResource {
         public string name { get; private set; }
-        
-        public ModSurrogate(string name)
-        {
+
+        public ModSurrogate(string name) {
             this.name = name;
         }
 
-        public void Load()
-        {
-            
+        public void Load() {
         }
 
-        public void LoadAsync()
-        {
-            
+        public void LoadAsync() {
         }
 
-        public void Unload()
-        {
-            
-        }        
+        public void Unload() {
+        }
     }
 
     /// <summary>
     /// A class that substitutes a ModScene while testing the Mod in play mode.
     /// </summary>
-    internal class ModSceneSurrogate : IResource
-    {
-        public string name
-        {
-            get; private set;
-        }
+    internal class ModSceneSurrogate : IResource {
+        public string name { get; private set; }
 
 
-        public ModSceneSurrogate(string name)
-        {
+        public ModSceneSurrogate(string name) {
             this.name = name;
-           
         }
 
-        public void Load()
-        {
-            
+        public void Load() {
         }
 
-        public void LoadAsync()
-        {
-            
+        public void LoadAsync() {
         }
 
-        public void Unload()
-        {
-           
+        public void Unload() {
         }
     }
 }

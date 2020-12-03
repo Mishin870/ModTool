@@ -1,19 +1,16 @@
 ﻿using UnityEditor;
 using ModTool.Shared;
 
-namespace ModTool.Editor
-{
+namespace ModTool.Editor {
     [CustomEditor(typeof(CodeSettings))]
-    public class CodeSettingsEditor : UnityEditor.Editor
-    {
+    public class CodeSettingsEditor : UnityEditor.Editor {
         private SerializedProperty inheritanceRestrictions;
         private SerializedProperty memberRestrictions;
         private SerializedProperty typeRestrictions;
         private SerializedProperty namespaceRestrictions;
         private SerializedProperty apiAssemblies;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             inheritanceRestrictions = serializedObject.FindProperty("_inheritanceRestrictions");
             memberRestrictions = serializedObject.FindProperty("_memberRestrictions");
             typeRestrictions = serializedObject.FindProperty("_typeRestrictions");
@@ -21,15 +18,14 @@ namespace ModTool.Editor
             apiAssemblies = serializedObject.FindProperty("_apiAssemblies");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             serializedObject.Update();
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
             //Note: Bug in inspector does not indent list PropertyField
             //EditorGUI.indentLevel++;
-            
+
             EditorGUILayout.PropertyField(inheritanceRestrictions, true);
             EditorGUILayout.PropertyField(memberRestrictions, true);
             EditorGUILayout.PropertyField(typeRestrictions, true);

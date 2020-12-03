@@ -2,11 +2,9 @@
 using UnityEditor;
 using ModTool.Shared;
 
-namespace ModTool.Exporting.Editor
-{
+namespace ModTool.Exporting.Editor {
     [CustomEditor(typeof(ExportSettings))]
-    public class ExportSettingsEditor : UnityEditor.Editor
-    {
+    public class ExportSettingsEditor : UnityEditor.Editor {
         private SerializedProperty _name;
         private SerializedProperty _author;
         private SerializedProperty _description;
@@ -18,8 +16,7 @@ namespace ModTool.Exporting.Editor
         private FilteredEnumMaskField platforms;
         private FilteredEnumMaskField content;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             _name = serializedObject.FindProperty("_name");
             _author = serializedObject.FindProperty("_author");
             _description = serializedObject.FindProperty("_description");
@@ -28,12 +25,11 @@ namespace ModTool.Exporting.Editor
             _content = serializedObject.FindProperty("_content");
             _outputDirectory = serializedObject.FindProperty("_outputDirectory");
 
-            platforms = new FilteredEnumMaskField(typeof(ModPlatform), (int)ModToolSettings.supportedPlatforms);
-            content = new FilteredEnumMaskField(typeof(ModContent), (int)ModToolSettings.supportedContent);
+            platforms = new FilteredEnumMaskField(typeof(ModPlatform), (int) ModToolSettings.supportedPlatforms);
+            content = new FilteredEnumMaskField(typeof(ModContent), (int) ModToolSettings.supportedContent);
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             serializedObject.Update();
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -50,7 +46,7 @@ namespace ModTool.Exporting.Editor
 
             _platforms.intValue = platforms.DoMaskField("Platforms*:", _platforms.intValue);
             _content.intValue = content.DoMaskField("Content*:", _content.intValue);
-            LogUtility.logLevel = (LogLevel)EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
+            LogUtility.logLevel = (LogLevel) EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
 
             bool enabled = GUI.enabled;
 
@@ -62,9 +58,9 @@ namespace ModTool.Exporting.Editor
 
             GUI.enabled = enabled;
 
-            if (GUILayout.Button("...", GUILayout.Width(30)))
-            {
-                string selectedDirectory = EditorUtility.SaveFolderPanel("Choose output directory", _outputDirectory.stringValue, "");
+            if (GUILayout.Button("...", GUILayout.Width(30))) {
+                string selectedDirectory =
+                    EditorUtility.SaveFolderPanel("Choose output directory", _outputDirectory.stringValue, "");
                 if (!string.IsNullOrEmpty(selectedDirectory))
                     _outputDirectory.stringValue = selectedDirectory;
 
@@ -80,9 +76,8 @@ namespace ModTool.Exporting.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private string GetShortString(string str)
-        {
-            int maxWidth = (int)EditorGUIUtility.currentViewWidth - 252;
+        private string GetShortString(string str) {
+            int maxWidth = (int) EditorGUIUtility.currentViewWidth - 252;
             int cutoffIndex = Mathf.Max(0, str.Length - 7 - (maxWidth / 7));
             string shortString = str.Substring(cutoffIndex);
             if (cutoffIndex > 0)

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace ModTool.Shared.Verification
-{
+namespace ModTool.Shared.Verification {
     /// <summary>
     /// Base class for restrictions. A restriction either requires or prohibits something.
     /// </summary>
     [Serializable]
-    public abstract class Restriction
-    {
+    public abstract class Restriction {
         /// <summary>
         /// The message to use when this restriction causes the verification to fail.
         /// </summary>
@@ -32,8 +30,7 @@ namespace ModTool.Shared.Verification
         /// <param name="applicableBaseType">The base Type this Restriction will apply to.</param>
         /// <param name="message">The Message that will be shown upon failing the Restriction.</param>
         /// <param name="restrictionMode">Should it be required or prohibited?</param>
-        protected Restriction(TypeName applicableBaseType, string message, RestrictionMode restrictionMode)
-        {
+        protected Restriction(TypeName applicableBaseType, string message, RestrictionMode restrictionMode) {
             this.applicableBaseType = applicableBaseType;
             this.message = message;
             this.restrictionMode = restrictionMode;
@@ -44,8 +41,7 @@ namespace ModTool.Shared.Verification
         /// </summary>
         /// <param name="member">A member.</param>
         /// <param name="messages">A list of messages of failed Restrictions.</param>
-        public void Verify(MemberReference member, List<string> messages)
-        {
+        public void Verify(MemberReference member, List<string> messages) {
             if (!Applicable(member))
                 return;
 
@@ -59,52 +55,44 @@ namespace ModTool.Shared.Verification
             if (present && restrictionMode == RestrictionMode.Prohibited)
                 messages.Add(GetMessage(member));
 
-            if (!present &&restrictionMode == RestrictionMode.Required)
+            if (!present && restrictionMode == RestrictionMode.Required)
                 messages.Add(GetMessage(member));
         }
-        
+
         /// <summary>
         /// Is the Restriction present in the member?
         /// </summary>
         /// <param name="member">A member.</param>
         /// <returns>True if the Restriction is present in the member.</returns>
-        protected virtual bool Present(MemberReference member)
-        {
+        protected virtual bool Present(MemberReference member) {
             return false;
-        }                
+        }
 
         /// <summary>
         /// Is the restriction present in a local variable?
         /// </summary>
         /// <param name="variable">A local variable</param>
         /// <returns>True if the restriction is present in the local variable.</returns>
-        protected virtual bool PresentMethodVariable(VariableReference variable)
-        {
+        protected virtual bool PresentMethodVariable(VariableReference variable) {
             return false;
-        }     
-                
-        private bool PresentInMethodRecursive(MethodReference method)
-        {
+        }
+
+        private bool PresentInMethodRecursive(MethodReference method) {
             HashSet<string> visited = new HashSet<string>();
 
             return PresentInMethodRecursive(method, visited);
         }
 
-        private bool PresentInMethodRecursive(MethodReference method, HashSet<string> visited)
-        {
+        private bool PresentInMethodRecursive(MethodReference method, HashSet<string> visited) {
             MethodDefinition resolvedMethod = null;
 
-            try
-            {
+            try {
                 resolvedMethod = method.Resolve();
-            }
-            catch (AssemblyResolutionException e)
-            {
+            } catch (AssemblyResolutionException e) {
                 LogUtility.LogWarning(e.Message);
             }
 
-            if (resolvedMethod != null)
-            {
+            if (resolvedMethod != null) {
                 if (!resolvedMethod.HasBody)
                     return false;
 
@@ -113,19 +101,16 @@ namespace ModTool.Shared.Verification
 
                 visited.Add(resolvedMethod.FullName);
 
-                foreach (VariableDefinition variable in resolvedMethod.Body.Variables)
-                {
+                foreach (VariableDefinition variable in resolvedMethod.Body.Variables) {
                     if (PresentMethodVariable(variable))
                         return true;
                 }
 
-                foreach (Instruction instruction in resolvedMethod.Body.Instructions)
-                {
+                foreach (Instruction instruction in resolvedMethod.Body.Instructions) {
                     if (instruction.Operand == null)
                         continue;
 
-                    if (instruction.Operand is MemberReference)
-                    {
+                    if (instruction.Operand is MemberReference) {
                         MemberReference member = instruction.Operand as MemberReference;
 
                         if (member.Module.Assembly.Name.Name == "ModTool.Interface")
@@ -146,8 +131,7 @@ namespace ModTool.Shared.Verification
                         if (member.DeclaringType.Namespace.StartsWith("Unity"))
                             continue;
 
-                        if (member is MethodReference)
-                        {
+                        if (member is MethodReference) {
                             if (PresentInMethodRecursive(member as MethodReference, visited))
                                 return true;
                         }
@@ -156,27 +140,24 @@ namespace ModTool.Shared.Verification
             }
 
             return false;
-        }        
+        }
 
         /// <summary>
         /// Get a Restriction message for a MemberReference.
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        protected virtual string GetMessage(MemberReference member)
-        {
+        protected virtual string GetMessage(MemberReference member) {
             return string.Format("{0}: {1} - {2}", restrictionMode, member.FullName, message);
         }
-                
+
         /// <summary>
         /// Is this Restriction applicable to the member?
         /// </summary>
         /// <param name="member">A member.</param>
         /// <returns>True if the Restriction is applicable.</returns>
-        protected bool Applicable(MemberReference member)
-        {            
-            if(member is TypeReference)
-            {
+        protected bool Applicable(MemberReference member) {
+            if (member is TypeReference) {
                 return Applicable(member as TypeReference);
             }
 
@@ -191,33 +172,28 @@ namespace ModTool.Shared.Verification
         /// </summary>
         /// <param name="type">A Type.</param>
         /// <returns>True if the Restriction is applicable.</returns>
-        protected bool Applicable(TypeReference type)
-        {
+        protected bool Applicable(TypeReference type) {
             if (applicableBaseType == null)
                 return true;
 
             if (string.IsNullOrEmpty(applicableBaseType.name))
                 return true;
 
-            try
-            {
+            try {
                 return type.Resolve().IsSubClassOf(applicableBaseType);
-            }
-            catch (AssemblyResolutionException e)
-            {
+            } catch (AssemblyResolutionException e) {
                 LogUtility.LogWarning(e.Message);
             }
 
             return false;
-        }        
+        }
     }
 
     /// <summary>
     /// A restriction that either requires or prohibits the use of a namespace.
     /// </summary>
     [Serializable]
-    public class NamespaceRestriction : Restriction
-    {
+    public class NamespaceRestriction : Restriction {
         /// <summary>
         /// The namespace that will be checked for this restriction.
         /// </summary>
@@ -236,14 +212,13 @@ namespace ModTool.Shared.Verification
         /// <param name="applicableBaseType">The base Type this Restriction will apply to.</param>
         /// <param name="message">The Message that will be shown upon failing the Restriction.</param>
         /// <param name="restrictionMode">Should it be required or prohibited?</param>
-        public NamespaceRestriction(string nameSpace, bool includeNested, TypeName applicableBaseType, string message, RestrictionMode restrictionMode) : base(applicableBaseType, message, restrictionMode)
-        {
+        public NamespaceRestriction(string nameSpace, bool includeNested, TypeName applicableBaseType, string message,
+            RestrictionMode restrictionMode) : base(applicableBaseType, message, restrictionMode) {
             this.nameSpace = nameSpace;
             this.includeNested = includeNested;
         }
 
-        protected override bool Present(MemberReference member)
-        {
+        protected override bool Present(MemberReference member) {
             if (member is TypeReference)
                 return CheckNamespace((member as TypeReference).Namespace);
             if (member is FieldReference)
@@ -257,13 +232,11 @@ namespace ModTool.Shared.Verification
             return CheckNamespace(member.DeclaringType.Namespace);
         }
 
-        protected override bool PresentMethodVariable(VariableReference variable)
-        {
+        protected override bool PresentMethodVariable(VariableReference variable) {
             return CheckNamespace(variable.VariableType.Namespace);
         }
 
-        private bool CheckNamespace(string nameSpace)
-        {
+        private bool CheckNamespace(string nameSpace) {
             if (includeNested)
                 return nameSpace.StartsWith(this.nameSpace);
             else
@@ -275,8 +248,7 @@ namespace ModTool.Shared.Verification
     /// A restriction that either requires or prohibits the use of a Type
     /// </summary>
     [Serializable]
-    public class TypeRestriction : Restriction
-    {
+    public class TypeRestriction : Restriction {
         /// <summary>
         /// The Type that will be checked for this Restriction.
         /// </summary>
@@ -289,22 +261,19 @@ namespace ModTool.Shared.Verification
         /// <param name="applicableBaseType">The base Type this Restriction will apply to.</param>
         /// <param name="message">The Message that will be shown upon failing the Restriction.</param>
         /// <param name="restrictionMode">Should it be required or prohibited?</param>
-        public TypeRestriction(TypeName type, TypeName applicableBaseType, string message, RestrictionMode restrictionMode)
-            : base(applicableBaseType, message, restrictionMode)
-        {
+        public TypeRestriction(TypeName type, TypeName applicableBaseType, string message,
+            RestrictionMode restrictionMode)
+            : base(applicableBaseType, message, restrictionMode) {
             this.type = type;
         }
 
-        protected override bool Present(MemberReference member)
-        {
-            if (member is FieldReference)
-            {
+        protected override bool Present(MemberReference member) {
+            if (member is FieldReference) {
                 FieldReference field = member as FieldReference;
                 return field.FieldType.Name == type.name && field.FieldType.Namespace == type.nameSpace;
             }
 
-            if (member is PropertyReference)
-            {
+            if (member is PropertyReference) {
                 PropertyReference property = member as PropertyReference;
                 return property.PropertyType.Name == type.name && property.PropertyType.Namespace == type.nameSpace;
             }
@@ -315,8 +284,7 @@ namespace ModTool.Shared.Verification
             return member.DeclaringType.Name == type.name && member.DeclaringType.Namespace == type.nameSpace;
         }
 
-        protected override bool PresentMethodVariable(VariableReference variable)
-        {
+        protected override bool PresentMethodVariable(VariableReference variable) {
             return (variable.VariableType.Name == type.name && variable.VariableType.Namespace == type.nameSpace);
         }
     }
@@ -325,8 +293,7 @@ namespace ModTool.Shared.Verification
     /// A restriction that either requires or prohibits inheritance from a class
     /// </summary>
     [Serializable]
-    public class InheritanceRestriction : Restriction
-    {
+    public class InheritanceRestriction : Restriction {
         /// <summary>
         /// The Type that will be checked for this Restriction.
         /// </summary>
@@ -339,16 +306,14 @@ namespace ModTool.Shared.Verification
         /// <param name="applicableBaseType">The base Type this Restriction will apply to.</param>
         /// <param name="message">The Message that will be shown upon failing the Restriction.</param>
         /// <param name="restrictionMode">Should it be required or prohibited?</param>
-        public InheritanceRestriction(TypeName type, TypeName applicableBaseType, string message, RestrictionMode restrictionMode)
-            : base(applicableBaseType, message, restrictionMode)
-        {
+        public InheritanceRestriction(TypeName type, TypeName applicableBaseType, string message,
+            RestrictionMode restrictionMode)
+            : base(applicableBaseType, message, restrictionMode) {
             this.type = type;
         }
 
-        protected override bool Present(MemberReference member)
-        {
-            if (member is TypeReference)
-            {
+        protected override bool Present(MemberReference member) {
+            if (member is TypeReference) {
                 TypeDefinition typeDefinition = (member as TypeReference).Resolve();
                 return typeDefinition.IsSubClassOf(type);
             }
@@ -362,14 +327,16 @@ namespace ModTool.Shared.Verification
     /// <summary>
     /// Type for applying Restrictions.
     /// </summary>
-    public enum RestrictionMode { Prohibited, Required }
+    public enum RestrictionMode {
+        Prohibited,
+        Required
+    }
 
     /// <summary>
     /// A restriction that either requires or prohibits the use of a given Type's member
     /// </summary>
     [Serializable]
-    public class MemberRestriction : Restriction
-    {
+    public class MemberRestriction : Restriction {
         /// <summary>
         /// The member that will be checked for this Restriction.
         /// </summary>
@@ -382,14 +349,13 @@ namespace ModTool.Shared.Verification
         /// <param name="applicableBaseType">The base Type this Restriction will apply to.</param>
         /// <param name="message">The Message that will be shown upon failing the Restriction.</param>
         /// <param name="restrictionMode">Should it be required or prohibited?</param>
-        public MemberRestriction(MemberName memberName, TypeName applicableBaseType, string message, RestrictionMode restrictionMode)
-            : base(applicableBaseType, message, restrictionMode)
-        {
+        public MemberRestriction(MemberName memberName, TypeName applicableBaseType, string message,
+            RestrictionMode restrictionMode)
+            : base(applicableBaseType, message, restrictionMode) {
             this.memberName = memberName;
         }
 
-        protected override bool Present(MemberReference member)
-        {
+        protected override bool Present(MemberReference member) {
             if (member.DeclaringType == null)
                 return member.Name == memberName.name;
 

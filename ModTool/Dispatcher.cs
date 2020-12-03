@@ -3,40 +3,32 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 
-namespace ModTool
-{
+namespace ModTool {
     /// <summary>
     /// Singleton Component for dispatching Coroutines and Actions on the main Thread.
     /// </summary>
-    internal class Dispatcher : UnitySingleton<Dispatcher>
-    {
+    internal class Dispatcher : UnitySingleton<Dispatcher> {
         private readonly Queue<Action> _executionQueue = new Queue<Action>();
         private Thread main;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
 
             main = Thread.CurrentThread;
         }
 
-        void Update()
-        {
+        void Update() {
             ProcessQueue();
         }
-        
-        protected override void OnDestroy()
-        {
+
+        protected override void OnDestroy() {
             ProcessQueue();
             base.OnDestroy();
         }
 
-        private void ProcessQueue()
-        {
-            lock (_executionQueue)
-            {
-                while (_executionQueue.Count > 0)
-                {
+        private void ProcessQueue() {
+            lock (_executionQueue) {
+                while (_executionQueue.Count > 0) {
                     _executionQueue.Dequeue().Invoke();
                 }
             }
@@ -46,12 +38,8 @@ namespace ModTool
         /// Enqueue a Coroutine.
         /// </summary>
         /// <param name="routine"></param>
-        public void Enqueue(IEnumerator routine)
-        {
-            Enqueue(() =>
-            {
-                StartCoroutine(routine);
-            });            
+        public void Enqueue(IEnumerator routine) {
+            Enqueue(() => { StartCoroutine(routine); });
         }
 
         /// <summary>
@@ -59,19 +47,16 @@ namespace ModTool
         /// </summary>
         /// <param name="action"></param>
         /// <param name="delayCall"></param>
-        public void Enqueue(Action action, bool delayCall = false)
-        {
+        public void Enqueue(Action action, bool delayCall = false) {
             //Don't queue if we're on the main thread.
-            if (Thread.CurrentThread == main && !delayCall)
-            {
+            if (Thread.CurrentThread == main && !delayCall) {
                 action.Invoke();
                 return;
             }
 
-            lock (_executionQueue)
-            {
+            lock (_executionQueue) {
                 _executionQueue.Enqueue(action);
             }
-        }        
+        }
     }
 }

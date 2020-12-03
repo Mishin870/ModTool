@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using ModTool.Shared;
 using UnityEditor;
 
-namespace ModTool.Exporting.Editor
-{
+namespace ModTool.Exporting.Editor {
     /// <summary>
     /// Extension methods for ModPlatform.
     /// </summary>
-    public static class EditorModPlatformExtensions
-    {
+    public static class EditorModPlatformExtensions {
         /// <summary>
         /// Does this ModPlatform include the equivalent BuildTarget?
         /// </summary>
         /// <param name="self">A ModPlatform instance.</param>
         /// <param name="buildTarget">The BuildTarget to check.</param>
         /// <returns>True if the ModPlatform has the BuildTarget.</returns>
-        public static bool HasBuildTarget(this ModPlatform self, BuildTarget buildTarget)
-        {
-            switch (buildTarget)
-            {
+        public static bool HasBuildTarget(this ModPlatform self, BuildTarget buildTarget) {
+            switch (buildTarget) {
                 case BuildTarget.StandaloneWindows:
                     if ((self & ModPlatform.Windows) == ModPlatform.Windows)
                         return true;
@@ -46,10 +42,8 @@ namespace ModTool.Exporting.Editor
         /// </summary>
         /// <param name="self">A BuildTarget instance.</param>
         /// <returns>The equivalent ModPlatform.</returns>
-        public static ModPlatform GetModPlatform(this BuildTarget self)
-        {
-            switch (self)
-            {
+        public static ModPlatform GetModPlatform(this BuildTarget self) {
+            switch (self) {
                 case BuildTarget.StandaloneWindows:
                     return ModPlatform.Windows;
                 case BuildTarget.StandaloneLinux64:
@@ -68,14 +62,12 @@ namespace ModTool.Exporting.Editor
         /// </summary>
         /// <param name="self">A ModPlatform Instance.</param>
         /// <returns>A list with equivalent BuildTargets</returns>
-        public static List<BuildTarget> GetBuildTargets(this ModPlatform self)
-        {
+        public static List<BuildTarget> GetBuildTargets(this ModPlatform self) {
             List<BuildTarget> runtimePlatforms = new List<BuildTarget>();
 
             var values = Enum.GetValues(typeof(BuildTarget));
 
-            foreach (BuildTarget r in values)
-            {
+            foreach (BuildTarget r in values) {
                 if (self.HasBuildTarget(r))
                     runtimePlatforms.Add(r);
             }

@@ -3,10 +3,8 @@ using UnityEngine;
 using ModTool.Shared;
 using ModTool.Shared.Editor;
 
-namespace ModTool.Editor
-{
-    internal class SettingsEditorWindow : EditorWindow
-    {
+namespace ModTool.Editor {
+    internal class SettingsEditorWindow : EditorWindow {
         private ModToolSettings modToolSettings;
         private CodeSettings codeSettings;
 
@@ -16,8 +14,7 @@ namespace ModTool.Editor
         Vector2 scrollPos = Vector2.zero;
 
         [MenuItem("Tools/ModTool/Settings")]
-        public static void ShowWindow()
-        {
+        public static void ShowWindow() {
             SettingsEditorWindow window = GetWindow<SettingsEditorWindow>();
 
             window.maxSize = new Vector2(385f, 255);
@@ -25,8 +22,7 @@ namespace ModTool.Editor
             window.titleContent = new GUIContent("ModTool Settings");
         }
 
-        void OnEnable()
-        {
+        void OnEnable() {
             modToolSettings = ModToolSettings.instance;
             codeSettings = CodeSettings.instance;
 
@@ -34,14 +30,12 @@ namespace ModTool.Editor
             codeSettingsEditor = UnityEditor.Editor.CreateEditor(codeSettings);
         }
 
-        void OnDisable()
-        {
+        void OnDisable() {
             DestroyImmediate(modToolSettingsEditor);
             DestroyImmediate(codeSettingsEditor);
         }
 
-        void OnGUI()
-        {
+        void OnGUI() {
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
             modToolSettingsEditor.OnInspectorGUI();

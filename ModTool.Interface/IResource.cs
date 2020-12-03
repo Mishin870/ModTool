@@ -1,11 +1,8 @@
-﻿
-namespace ModTool.Interface
-{
+﻿namespace ModTool.Interface {
     /// <summary>
     /// A loadable resource
     /// </summary>
-    public interface IResource
-    {
+    public interface IResource {
         /// <summary>
         /// The resource's name.
         /// </summary>

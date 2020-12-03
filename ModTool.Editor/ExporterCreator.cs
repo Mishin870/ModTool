@@ -9,16 +9,13 @@ using ModTool.Shared.Editor;
 //Note: ModTool uses an old version of Mono.Cecil in the editor
 #pragma warning disable CS0618
 
-namespace ModTool.Editor
-{
-    internal class ExporterCreator
-    {
+namespace ModTool.Editor {
+    internal class ExporterCreator {
         /// <summary>
         /// Create a mod exporter package for this game.
         /// </summary>
         [MenuItem("Tools/ModTool/Create Exporter")]
-        public static void CreateExporter()
-        {
+        public static void CreateExporter() {
             CreateExporter(Directory.GetCurrentDirectory(), true);
         }
 
@@ -26,15 +23,13 @@ namespace ModTool.Editor
         /// Create a mod exporter package after building the game.
         /// </summary>
         [UnityEditor.Callbacks.PostProcessBuild]
-        public static void CreateExporterPostBuild(BuildTarget target, string pathToBuiltProject)
-        {
+        public static void CreateExporterPostBuild(BuildTarget target, string pathToBuiltProject) {
             pathToBuiltProject = Path.GetDirectoryName(pathToBuiltProject);
 
             CreateExporter(pathToBuiltProject);
         }
-        
-        private static void CreateExporter(string path, bool revealPackage = false)
-        {
+
+        private static void CreateExporter(string path, bool revealPackage = false) {
             LogUtility.LogInfo("Creating Exporter");
 
             UpdateSettings();
@@ -43,12 +38,12 @@ namespace ModTool.Editor
             CodeSettings codeSettings = CodeSettings.instance;
 
             string modToolDirectory = AssetUtility.GetModToolDirectory();
-            string exporterPath = Path.Combine(modToolDirectory, Path.Combine("Editor", "ModTool.Exporting.Editor.dll"));
+            string exporterPath =
+                Path.Combine(modToolDirectory, Path.Combine("Editor", "ModTool.Exporting.Editor.dll"));
             string fileName = Path.Combine(path, Application.productName + " Mod Tools.unitypackage");
             string projectSettingsDirectory = "ProjectSettings";
 
-            List<string> assetPaths = new List<string>
-            {
+            List<string> assetPaths = new List<string> {
                 AssetDatabase.GetAssetPath(modToolSettings),
                 AssetDatabase.GetAssetPath(codeSettings),
                 Path.Combine(modToolDirectory, Path.Combine("Editor", "ModTool.Exporting.Editor.dll")),
@@ -81,12 +76,11 @@ namespace ModTool.Editor
 
             SetPluginEnabled(exporterPath, false);
 
-            if(revealPackage)
+            if (revealPackage)
                 EditorUtility.RevealInFinder(fileName);
         }
 
-        private static void SetPluginEnabled(string pluginPath, bool enabled)
-        {
+        private static void SetPluginEnabled(string pluginPath, bool enabled) {
             PluginImporter pluginImporter = AssetImporter.GetAtPath(pluginPath) as PluginImporter;
 
             if (pluginImporter.GetCompatibleWithEditor() == enabled)
@@ -96,14 +90,12 @@ namespace ModTool.Editor
             pluginImporter.SaveAndReimport();
         }
 
-        private static void GetApiAssemblies(string path, List<string> assemblies)
-        {
+        private static void GetApiAssemblies(string path, List<string> assemblies) {
             List<string> assemblyPaths = AssemblyUtility.GetAssemblies(path, AssemblyFilter.ApiAssemblies);
-            
+
             string modToolDirectory = AssetUtility.GetModToolDirectory();
-            
-            foreach(string assemblyPath in assemblyPaths)
-            {
+
+            foreach (string assemblyPath in assemblyPaths) {
                 string fileName = Path.GetFileName(assemblyPath);
                 string newPath = Path.Combine(modToolDirectory, fileName);
 
@@ -111,16 +103,19 @@ namespace ModTool.Editor
                 AssetDatabase.ImportAsset(newPath);
 
                 assemblies.Add(newPath);
-            }            
-        }   
-        
-        private static void UpdateSettings()
-        {
-            if (string.IsNullOrEmpty(ModToolSettings.productName) || ModToolSettings.productName != Application.productName)
-                typeof(ModToolSettings).GetField("_productName", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(ModToolSettings.instance, Application.productName);
+            }
+        }
 
-            if (string.IsNullOrEmpty(ModToolSettings.unityVersion) || ModToolSettings.unityVersion != Application.unityVersion)            
-                typeof(ModToolSettings).GetField("_unityVersion", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(ModToolSettings.instance, Application.unityVersion);
+        private static void UpdateSettings() {
+            if (string.IsNullOrEmpty(ModToolSettings.productName) ||
+                ModToolSettings.productName != Application.productName)
+                typeof(ModToolSettings).GetField("_productName", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .SetValue(ModToolSettings.instance, Application.productName);
+
+            if (string.IsNullOrEmpty(ModToolSettings.unityVersion) ||
+                ModToolSettings.unityVersion != Application.unityVersion)
+                typeof(ModToolSettings).GetField("_unityVersion", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .SetValue(ModToolSettings.instance, Application.unityVersion);
 
             EditorUtility.SetDirty(ModToolSettings.instance);
         }

@@ -5,13 +5,11 @@ using UnityEditor;
 using ModTool.Shared;
 using ModTool.Shared.Editor;
 
-namespace ModTool.Exporting.Editor
-{
+namespace ModTool.Exporting.Editor {
     /// <summary>
     /// Main class for exporting a project as a mod.
     /// </summary>
-    public class ModExporter : EditorScriptableSingleton<ModExporter>
-    {
+    public class ModExporter : EditorScriptableSingleton<ModExporter> {
         /// <summary>
         /// Occurs when the export process is starting.
         /// </summary>
@@ -25,16 +23,11 @@ namespace ModTool.Exporting.Editor
         /// <summary>
         /// Is this ModExporter currently exporting a Mod?
         /// </summary>
-        public static bool isExporting
-        {
-            get
-            {
-                return instance.currentStep >= 0;
-            }
+        public static bool isExporting {
+            get { return instance.currentStep >= 0; }
         }
 
-        private ExportStep[] exportSteps = new ExportStep[]
-        {
+        private ExportStep[] exportSteps = new ExportStep[] {
             new StartExport(),
             new Verify(),
             new GetContent(),
@@ -45,50 +38,42 @@ namespace ModTool.Exporting.Editor
             //new RestoreProject(),
         };
 
-        [SerializeField]
-        private int currentStep = -1;        
-                
+        [SerializeField] private int currentStep = -1;
+
         private ExportData data;
 
         private static bool didReloadScripts;
-        
-        void OnEnable()
-        {
+
+        void OnEnable() {
             EditorApplication.update += Update;
         }
 
-        void OnDisable()
-        {
+        void OnDisable() {
             ExportStarting = null;
             ExportComplete = null;
             EditorApplication.update -= Update;
         }
 
-        void Update()
-        {
+        void Update() {
             if (isExporting && EditorApplication.isPlayingOrWillChangePlaymode)
                 EditorApplication.isPlaying = false;
-            
-            if (didReloadScripts)
-            {
+
+            if (didReloadScripts) {
                 didReloadScripts = false;
                 OnAssemblyReload();
             }
         }
-        
+
         [UnityEditor.Callbacks.DidReloadScripts]
-        static void OnDidReloadScripts()
-        {
+        static void OnDidReloadScripts() {
             didReloadScripts = true;
         }
 
         /// <summary>
         /// Start exporting a Mod.
         /// </summary>
-        public static void ExportMod()
-        {
-            if(isExporting)
-            {
+        public static void ExportMod() {
+            if (isExporting) {
                 LogUtility.LogError("Already exporting");
                 return;
             }
@@ -96,8 +81,7 @@ namespace ModTool.Exporting.Editor
             instance.StartExport();
         }
 
-        private void StartExport()
-        {
+        private void StartExport() {
             data = new ExportData();
 
             LogUtility.LogInfo("Exporting Mod: " + ExportSettings.name);
@@ -108,16 +92,14 @@ namespace ModTool.Exporting.Editor
 
             Continue();
         }
-        
-        private void Continue()
-        {
-            while (currentStep < exportSteps.Length)
-            {
+
+        private void Continue() {
+            while (currentStep < exportSteps.Length) {
                 ExportStep step = exportSteps[currentStep];
-                float progress = (float)currentStep / exportSteps.Length;
+                float progress = (float) currentStep / exportSteps.Length;
 
                 EditorUtility.DisplayProgressBar("Exporting", step.message + "...", progress);
-                                
+
                 if (!ExecuteStep(step))
                     break;
 
@@ -133,36 +115,30 @@ namespace ModTool.Exporting.Editor
             StopExport();
         }
 
-        private bool ExecuteStep(ExportStep step)
-        {
+        private bool ExecuteStep(ExportStep step) {
             LogUtility.LogDebug(step.message);
 
-            try
-            {
+            try {
                 step.Execute(data);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(step.message + " failed: " + e.Message);                
+            } catch (Exception e) {
+                Debug.LogError(step.message + " failed: " + e.Message);
                 return false;
             }
 
             return true;
-        }               
+        }
 
-        private void OnAssemblyReload()
-        {
+        private void OnAssemblyReload() {
             if (!isExporting)
                 return;
-                        
+
             Continue();
         }
-        
-        private void StopExport()
-        {
+
+        private void StopExport() {
             if (!isExporting)
                 return;
-            
+
             currentStep = -1;
 
             Restore();
@@ -170,10 +146,10 @@ namespace ModTool.Exporting.Editor
             EditorUtility.ClearProgressBar();
         }
 
-        private void Restore()
-        {
-            if(!ExecuteStep(new RestoreProject()))            
-                Debug.LogWarning("Some assets might be corrupted. A backup has been made in " + Path.Combine(Directory.GetCurrentDirectory(), Asset.backupDirectory));            
-        }        
-    }    
+        private void Restore() {
+            if (!ExecuteStep(new RestoreProject()))
+                Debug.LogWarning("Some assets might be corrupted. A backup has been made in " +
+                                 Path.Combine(Directory.GetCurrentDirectory(), Asset.backupDirectory));
+        }
+    }
 }

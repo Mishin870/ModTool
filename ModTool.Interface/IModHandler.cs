@@ -1,11 +1,8 @@
-﻿
-namespace ModTool.Interface
-{
+﻿namespace ModTool.Interface {
     /// <summary>
     /// Provides methods for handling loading and unloading of mods.
     /// </summary>
-    public interface IModHandler
-    {
+    public interface IModHandler {
         /// <summary>
         /// Called when the Mod is loaded.
         /// </summary>

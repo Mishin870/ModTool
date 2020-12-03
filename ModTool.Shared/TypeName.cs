@@ -1,13 +1,11 @@
 ﻿using System;
 
-namespace ModTool.Shared.Verification
-{
+namespace ModTool.Shared.Verification {
     /// <summary>
     /// Represents a Type's name.
     /// </summary>
     [Serializable]
-    public class TypeName
-    {
+    public class TypeName {
         /// <summary>
         /// The Type's namespace.
         /// </summary>
@@ -23,15 +21,12 @@ namespace ModTool.Shared.Verification
         /// </summary>
         /// <param name="nameSpace">The Type's namespace.</param>
         /// <param name="name">The Type's name.</param>
-        public TypeName(string nameSpace, string name)
-        {
+        public TypeName(string nameSpace, string name) {
             this.nameSpace = nameSpace;
             this.name = name;
-        }        
+        }
 
-        public TypeName()
-        {
-
+        public TypeName() {
         }
     }
 }
