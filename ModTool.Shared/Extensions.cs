@@ -14,9 +14,9 @@ namespace ModTool.Shared {
         /// <param name="self">An enum instance.</param>
         /// <returns>A fixed enum.</returns>
         public static int FixEnum(this Enum self) {
-            int bits = 0;
+            var bits = 0;
             foreach (var enumValue in Enum.GetValues(self.GetType())) {
-                int checkBit = Convert.ToInt32(self) & (int) enumValue;
+                var checkBit = Convert.ToInt32(self) & (int) enumValue;
                 if (checkBit != 0) {
                     bits |= (int) enumValue;
                 }
@@ -65,7 +65,7 @@ namespace ModTool.Shared {
         /// <param name="self">A string.</param>
         /// <returns>A normalized version of a path.</returns>
         public static string NormalizedPath(this string self) {
-            string normalizedPath = Path.GetFullPath(new Uri(self).LocalPath);
+            var normalizedPath = Path.GetFullPath(new Uri(self).LocalPath);
             normalizedPath = normalizedPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             normalizedPath = normalizedPath.ToLowerInvariant();
             return normalizedPath;
@@ -94,7 +94,7 @@ namespace ModTool.Shared {
         /// <param name="name">A Type's name.</param>
         /// <returns>True if this TypeDefinition is a subclass of the Type.</returns>
         public static bool IsSubClassOf(this TypeDefinition self, string @namespace, string name) {
-            TypeDefinition type = self;
+            var type = self;
 
             while (type != null) {
                 if (type.BaseType != null) {
@@ -122,7 +122,7 @@ namespace ModTool.Shared {
         /// <param name="methodName">A method's name</param>
         /// <returns>The MethodDefinition for the method, if found. Null otherwise.</returns>
         public static MethodDefinition GetMethod(this TypeDefinition self, string methodName) {
-            foreach (MethodDefinition method in self.Methods) {
+            foreach (var method in self.Methods) {
                 if (method.Name == methodName)
                     return method;
             }
@@ -137,7 +137,7 @@ namespace ModTool.Shared {
         /// <param name="fieldName">The FieldDefinition for the field, if found. Null otherwise.</param>
         /// <returns>The FieldDefinition, or null of none was found.</returns>
         public static FieldDefinition GetField(this TypeDefinition self, string fieldName) {
-            foreach (FieldDefinition field in self.Fields) {
+            foreach (var field in self.Fields) {
                 if (field.Name == fieldName)
                     return field;
             }
@@ -152,7 +152,7 @@ namespace ModTool.Shared {
         /// <param name="propertyName">The PropertyDefinition for the field, if found. Null otherwise.</param>
         /// <returns>The PropertyDefinition, or null of none was found.</returns>
         public static PropertyDefinition GetProperty(this TypeDefinition self, string propertyName) {
-            foreach (PropertyDefinition property in self.Properties) {
+            foreach (var property in self.Properties) {
                 if (property.Name == propertyName)
                     return property;
             }

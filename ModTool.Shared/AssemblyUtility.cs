@@ -24,7 +24,7 @@ namespace ModTool.Shared {
         /// <param name="path">The directory to search in.</param>
         /// <returns>A List of paths to found Assemblies.</returns>
         public static List<string> GetAssemblies(string path, AssemblyFilter assemblyFilter) {
-            List<string> assemblies = new List<string>();
+            var assemblies = new List<string>();
 
             GetAssemblies(assemblies, path, assemblyFilter);
 
@@ -44,7 +44,7 @@ namespace ModTool.Shared {
                     continue;
                 }
 
-                string name = assemblyDefinition.Name.Name;
+                var name = assemblyDefinition.Name.Name;
 
                 if (name == "ModTool" || name.StartsWith("ModTool.")) {
                     if ((assemblyFilter & AssemblyFilter.ModToolAssemblies) != 0)

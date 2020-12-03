@@ -40,7 +40,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         public int DoMaskField(string label, int value) {
-            int mask = ValueToMask(value);
+            var mask = ValueToMask(value);
 
             mask = EditorGUILayout.MaskField(label, mask, options);
 
@@ -51,15 +51,15 @@ namespace ModTool.Exporting.Editor {
             valueToMask.Clear();
             maskToValue.Clear();
 
-            List<string> options = new List<string>();
+            var options = new List<string>();
 
             names = Enum.GetNames(enumType);
             values = (int[]) Enum.GetValues(enumType);
 
-            int n = 0;
+            var n = 0;
 
-            for (int i = 0; i < values.Length; i++) {
-                int value = values[i];
+            for (var i = 0; i < values.Length; i++) {
+                var value = values[i];
 
                 if ((filter & value) != 0) {
                     valueToMask.Add(value, 1 << n);
@@ -75,7 +75,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private int ValueToMask(int value) {
-            int mask = 0;
+            var mask = 0;
 
             foreach (var valueMask in valueToMask) {
                 if ((value & valueMask.Key) != 0)
@@ -86,7 +86,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private int MaskToValue(int mask) {
-            int value = 0;
+            var value = 0;
 
             foreach (var maskValue in maskToValue) {
                 if ((mask & maskValue.Key) != 0)

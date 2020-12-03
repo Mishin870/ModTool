@@ -38,8 +38,8 @@ namespace ModTool.Shared {
         }
 
         private static void CreateAsset() {
-            Type type = Type.GetType("ModTool.Shared.Editor.AssetUtility, ModTool.Shared.Editor");
-            MethodInfo method = type.GetMethod("CreateAsset", BindingFlags.Public | BindingFlags.Static);
+            var type = Type.GetType("ModTool.Shared.Editor.AssetUtility, ModTool.Shared.Editor");
+            var method = type.GetMethod("CreateAsset", BindingFlags.Public | BindingFlags.Static);
 
             method.Invoke(null, new object[] {_instance});
         }

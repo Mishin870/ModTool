@@ -95,8 +95,8 @@ namespace ModTool.Exporting.Editor {
 
         private void Continue() {
             while (currentStep < exportSteps.Length) {
-                ExportStep step = exportSteps[currentStep];
-                float progress = (float) currentStep / exportSteps.Length;
+                var step = exportSteps[currentStep];
+                var progress = (float) currentStep / exportSteps.Length;
 
                 EditorUtility.DisplayProgressBar("Exporting", step.message + "...", progress);
 

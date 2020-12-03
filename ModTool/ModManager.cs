@@ -133,7 +133,7 @@ namespace ModTool {
         }
 
         private void OnModUnloaded(Resource mod) {
-            Mod _mod = (Mod) mod;
+            var _mod = (Mod) mod;
 
             if (ModUnloaded != null)
                 ModUnloaded.Invoke(_mod);
@@ -173,7 +173,7 @@ namespace ModTool {
             if (searchDirectories.Any(s => s.path.NormalizedPath() == path.NormalizedPath()))
                 return;
 
-            ModSearchDirectory directory = new ModSearchDirectory(path);
+            var directory = new ModSearchDirectory(path);
 
             directory.ModFound += OnModFound;
             directory.ModRemoved += OnModRemoved;
@@ -189,7 +189,7 @@ namespace ModTool {
         /// </summary>
         /// <param name="path">The path of the search directory.</param>
         public void RemoveSearchDirectory(string path) {
-            ModSearchDirectory directory =
+            var directory =
                 searchDirectories.Find(s => s.path.NormalizedPath() == path.NormalizedPath());
 
             if (directory == null)
@@ -204,7 +204,7 @@ namespace ModTool {
         /// Refresh all search directories and update any new, changed or removed Mods.
         /// </summary>
         public void RefreshSearchDirectories() {
-            foreach (ModSearchDirectory searchDirectory in searchDirectories)
+            foreach (var searchDirectory in searchDirectories)
                 searchDirectory.Refresh();
         }
 
@@ -249,7 +249,7 @@ namespace ModTool {
                     return;
             }
 
-            Mod mod = new Mod(path);
+            var mod = new Mod(path);
 
             lock (_lock) {
                 _modPaths.Add(path, mod);
@@ -267,7 +267,7 @@ namespace ModTool {
             mod.SceneLoadCancelled += OnSceneLoadCancelled;
 
             mod.UpdateConflicts(_mods);
-            foreach (Mod other in _mods)
+            foreach (var other in _mods)
                 other.UpdateConflicts(mod);
 
             LogUtility.LogInfo("Mod found: " + mod.name + " - " + mod.contentType);
@@ -303,7 +303,7 @@ namespace ModTool {
             mod.SceneLoadCancelled -= OnSceneLoadCancelled;
             mod.SetInvalid();
 
-            foreach (Mod other in _mods)
+            foreach (var other in _mods)
                 other.UpdateConflicts(mod);
 
             LogUtility.LogInfo("Mod removed: " + mod.name);
@@ -316,12 +316,12 @@ namespace ModTool {
         protected override void OnDestroy() {
             queuedRefreshMods.Clear();
 
-            foreach (Mod mod in _mods) {
+            foreach (var mod in _mods) {
                 mod.Unload();
                 mod.SetInvalid();
             }
 
-            foreach (ModSearchDirectory searchDirectory in searchDirectories) {
+            foreach (var searchDirectory in searchDirectories) {
                 searchDirectory.Dispose();
             }
 

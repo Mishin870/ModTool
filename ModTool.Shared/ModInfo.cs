@@ -129,7 +129,7 @@ namespace ModTool.Shared {
         /// <param name="path">The path to save the ModInfo to.</param>
         /// <param name="modInfo">The ModInfo to save.</param>
         public static void Save(string path, ModInfo modInfo) {
-            string json = JsonUtility.ToJson(modInfo, true);
+            var json = JsonUtility.ToJson(modInfo, true);
 
             File.WriteAllText(path, json);
         }
@@ -144,9 +144,9 @@ namespace ModTool.Shared {
 
             if (File.Exists(path)) {
                 try {
-                    string json = File.ReadAllText(path);
+                    var json = File.ReadAllText(path);
 
-                    ModInfo modInfo = JsonUtility.FromJson<ModInfo>(json);
+                    var modInfo = JsonUtility.FromJson<ModInfo>(json);
 
                     modInfo.path = path;
 

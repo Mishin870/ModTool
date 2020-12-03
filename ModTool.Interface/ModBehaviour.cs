@@ -40,7 +40,7 @@ namespace ModTool.Interface {
                 return null;
             }
 
-            Object o = contentHandler.Instantiate(original, position, rotation);
+            var o = contentHandler.Instantiate(original, position, rotation);
 
             if (o is GameObject)
                 SceneManager.MoveGameObjectToScene(o as GameObject, gameObject.scene);
@@ -70,7 +70,7 @@ namespace ModTool.Interface {
                 return default(T);
             }
 
-            T o = contentHandler.Instantiate(original);
+            var o = contentHandler.Instantiate(original);
 
             if (o is GameObject)
                 SceneManager.MoveGameObjectToScene(o as GameObject, gameObject.scene);

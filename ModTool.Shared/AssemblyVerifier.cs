@@ -35,10 +35,10 @@ namespace ModTool.Shared.Verification {
         }
 
         private static void VerifyAssembly(string path, List<string> messages) {
-            AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(path);
+            var assembly = AssemblyDefinition.ReadAssembly(path);
 
             foreach (var module in assembly.Modules) {
-                DefaultAssemblyResolver resolver = (DefaultAssemblyResolver) module.AssemblyResolver;
+                var resolver = (DefaultAssemblyResolver) module.AssemblyResolver;
 
                 resolver.AddSearchDirectory(Path.GetDirectoryName(path));
 
@@ -59,7 +59,7 @@ namespace ModTool.Shared.Verification {
                 resolver.AddSearchDirectory(Path.GetDirectoryName(typeof(UnityEngine.Object).Assembly.Location));
                 resolver.AddSearchDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Assets"));
 
-                foreach (string directory in Directory.GetDirectories(Directory.GetCurrentDirectory(), "ModTool",
+                foreach (var directory in Directory.GetDirectories(Directory.GetCurrentDirectory(), "ModTool",
                     SearchOption.AllDirectories))
                     resolver.AddSearchDirectory(directory);
 
@@ -68,7 +68,7 @@ namespace ModTool.Shared.Verification {
 
             if (platform == RuntimePlatform.WindowsPlayer || platform == RuntimePlatform.LinuxPlayer ||
                 platform == RuntimePlatform.OSXPlayer) {
-                foreach (string directory in Directory.GetDirectories(Directory.GetCurrentDirectory(), "Managed",
+                foreach (var directory in Directory.GetDirectories(Directory.GetCurrentDirectory(), "Managed",
                     SearchOption.AllDirectories))
                     resolver.AddSearchDirectory(directory);
 

@@ -34,16 +34,16 @@ namespace ModTool.Editor {
 
             UpdateSettings();
 
-            ModToolSettings modToolSettings = ModToolSettings.instance;
-            CodeSettings codeSettings = CodeSettings.instance;
+            var modToolSettings = ModToolSettings.instance;
+            var codeSettings = CodeSettings.instance;
 
-            string modToolDirectory = AssetUtility.GetModToolDirectory();
-            string exporterPath =
+            var modToolDirectory = AssetUtility.GetModToolDirectory();
+            var exporterPath =
                 Path.Combine(modToolDirectory, Path.Combine("Editor", "ModTool.Exporting.Editor.dll"));
-            string fileName = Path.Combine(path, Application.productName + " Mod Tools.unitypackage");
-            string projectSettingsDirectory = "ProjectSettings";
+            var fileName = Path.Combine(path, Application.productName + " Mod Tools.unitypackage");
+            var projectSettingsDirectory = "ProjectSettings";
 
-            List<string> assetPaths = new List<string> {
+            var assetPaths = new List<string> {
                 AssetDatabase.GetAssetPath(modToolSettings),
                 AssetDatabase.GetAssetPath(codeSettings),
                 Path.Combine(modToolDirectory, Path.Combine("Editor", "ModTool.Exporting.Editor.dll")),
@@ -62,7 +62,7 @@ namespace ModTool.Editor {
 
             SetPluginEnabled(exporterPath, true);
 
-            List<string> assemblyPaths = new List<string>();
+            var assemblyPaths = new List<string>();
 
             GetApiAssemblies("Assets", assemblyPaths);
             GetApiAssemblies("Library", assemblyPaths);
@@ -71,7 +71,7 @@ namespace ModTool.Editor {
 
             AssetDatabase.ExportPackage(assetPaths.ToArray(), fileName);
 
-            foreach (string assemblyPath in assemblyPaths)
+            foreach (var assemblyPath in assemblyPaths)
                 AssetDatabase.DeleteAsset(assemblyPath);
 
             SetPluginEnabled(exporterPath, false);
@@ -81,7 +81,7 @@ namespace ModTool.Editor {
         }
 
         private static void SetPluginEnabled(string pluginPath, bool enabled) {
-            PluginImporter pluginImporter = AssetImporter.GetAtPath(pluginPath) as PluginImporter;
+            var pluginImporter = AssetImporter.GetAtPath(pluginPath) as PluginImporter;
 
             if (pluginImporter.GetCompatibleWithEditor() == enabled)
                 return;
@@ -91,13 +91,13 @@ namespace ModTool.Editor {
         }
 
         private static void GetApiAssemblies(string path, List<string> assemblies) {
-            List<string> assemblyPaths = AssemblyUtility.GetAssemblies(path, AssemblyFilter.ApiAssemblies);
+            var assemblyPaths = AssemblyUtility.GetAssemblies(path, AssemblyFilter.ApiAssemblies);
 
-            string modToolDirectory = AssetUtility.GetModToolDirectory();
+            var modToolDirectory = AssetUtility.GetModToolDirectory();
 
-            foreach (string assemblyPath in assemblyPaths) {
-                string fileName = Path.GetFileName(assemblyPath);
-                string newPath = Path.Combine(modToolDirectory, fileName);
+            foreach (var assemblyPath in assemblyPaths) {
+                var fileName = Path.GetFileName(assemblyPath);
+                var newPath = Path.Combine(modToolDirectory, fileName);
 
                 File.Copy(assemblyPath, newPath, true);
                 AssetDatabase.ImportAsset(newPath);

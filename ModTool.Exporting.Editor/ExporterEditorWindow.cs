@@ -7,14 +7,14 @@ namespace ModTool.Exporting.Editor {
 
         [MenuItem("Tools/ModTool/Export Mod")]
         public static void ShowWindow() {
-            ExporterEditorWindow window = GetWindow<ExporterEditorWindow>();
+            var window = GetWindow<ExporterEditorWindow>();
             window.maxSize = new Vector2(385f, 265);
             window.minSize = new Vector2(300f, 265);
             window.titleContent = new GUIContent("Mod Exporter");
         }
 
         void OnEnable() {
-            ExportSettings exportSettings = ExportSettings.instance;
+            var exportSettings = ExportSettings.instance;
 
             exportSettingsEditor = UnityEditor.Editor.CreateEditor(exportSettings);
         }
@@ -30,7 +30,7 @@ namespace ModTool.Exporting.Editor {
 
             GUILayout.FlexibleSpace();
 
-            bool buttonPressed = GUILayout.Button("Export Mod", GUILayout.Height(30));
+            var buttonPressed = GUILayout.Button("Export Mod", GUILayout.Height(30));
 
             if (buttonPressed)
                 ModExporter.ExportMod();

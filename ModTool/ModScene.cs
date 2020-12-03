@@ -41,7 +41,7 @@ namespace ModTool {
         }
 
         protected override IEnumerator LoadResourcesAsync() {
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+            var loadOperation = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
             loadOperation.allowSceneActivation = false;
 
             while (loadOperation.progress < .9f) {
@@ -74,7 +74,7 @@ namespace ModTool {
         }
 
         protected override void OnLoaded() {
-            foreach (IModHandler modHandler in GetComponentsInScene<IModHandler>())
+            foreach (var modHandler in GetComponentsInScene<IModHandler>())
                 modHandler.OnLoaded(mod.contentHandler);
 
             base.OnLoaded();

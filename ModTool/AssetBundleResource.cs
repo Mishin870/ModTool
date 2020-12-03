@@ -35,7 +35,7 @@ namespace ModTool {
         }
 
         protected override IEnumerator LoadResourcesAsync() {
-            AssetBundleCreateRequest assetBundleCreateRequest = AssetBundle.LoadFromFileAsync(path);
+            var assetBundleCreateRequest = AssetBundle.LoadFromFileAsync(path);
 
             while (!assetBundleCreateRequest.isDone) {
                 loadProgress = assetBundleCreateRequest.progress;
@@ -53,7 +53,7 @@ namespace ModTool {
         }
 
         private void GetAssetPaths() {
-            List<string> assetPaths = new List<string>();
+            var assetPaths = new List<string>();
 
             this.assetPaths = assetPaths.AsReadOnly();
 
@@ -63,7 +63,7 @@ namespace ModTool {
             if (!File.Exists(path))
                 return;
 
-            string manifestPath = path + ".manifest";
+            var manifestPath = path + ".manifest";
 
             if (!File.Exists(manifestPath)) {
                 LogUtility.LogWarning(name + " manifest missing");
@@ -73,15 +73,15 @@ namespace ModTool {
             _canLoad = true;
 
             //TODO: long lines in manifest are formatted?
-            string[] lines = File.ReadAllLines(manifestPath);
+            var lines = File.ReadAllLines(manifestPath);
 
-            int start = Array.IndexOf(lines, "Assets:") + 1;
+            var start = Array.IndexOf(lines, "Assets:") + 1;
 
-            for (int i = start; i < lines.Length; i++) {
+            for (var i = start; i < lines.Length; i++) {
                 if (!lines[i].StartsWith("- "))
                     break;
 
-                string assetPath = lines[i].Substring(2);
+                var assetPath = lines[i].Substring(2);
 
                 //Note: if the asset is a scene, we only need the name
                 if (assetPath.EndsWith(".unity"))

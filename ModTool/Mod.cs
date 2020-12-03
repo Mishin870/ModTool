@@ -134,11 +134,11 @@ namespace ModTool {
 
             contentType = modInfo.content;
 
-            string modDirectory = Path.GetDirectoryName(path);
-            string platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
+            var modDirectory = Path.GetDirectoryName(path);
+            var platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
 
-            string assets = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".assets");
-            string scenes = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".scenes");
+            var assets = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".assets");
+            var scenes = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".scenes");
 
             assemblyFiles = AssemblyUtility.GetAssemblies(modDirectory, AssemblyFilter.ModAssemblies);
             assetsResource = new AssetBundleResource(name + " assets", assets);
@@ -172,8 +172,8 @@ namespace ModTool {
             assetsResource.Loaded += OnAssetsResourceLoaded;
             scenesResource.Loaded += OnScenesResourceLoaded;
 
-            foreach (string sceneName in sceneNames) {
-                ModScene modScene = new ModScene(sceneName, this);
+            foreach (var sceneName in sceneNames) {
+                var modScene = new ModScene(sceneName, this);
 
                 modScene.Loaded += OnSceneLoaded;
                 modScene.Unloaded += OnSceneUnloaded;
@@ -182,7 +182,7 @@ namespace ModTool {
                 _scenes.Add(modScene);
             }
 
-            foreach (string assembly in assemblyFiles)
+            foreach (var assembly in assemblyFiles)
                 _assemblyNames.Add(Path.GetFileName(assembly));
 
             contentHandler = new ContentHandler(this, _scenes.Cast<IResource>().ToList().AsReadOnly(), prefabs);
@@ -211,7 +211,7 @@ namespace ModTool {
                 LogUtility.LogWarning("Assemblies missing for Mod: " + name);
             }
 
-            foreach (string path in assemblyFiles) {
+            foreach (var path in assemblyFiles) {
                 if (!File.Exists(path)) {
                     isValid = false;
                     LogUtility.LogWarning(path + " missing for Mod: " + name);
@@ -220,7 +220,7 @@ namespace ModTool {
         }
 
         private void VerifyAssemblies() {
-            List<string> messages = new List<string>();
+            var messages = new List<string>();
 
             AssemblyVerifier.VerifyAssemblies(assemblyFiles, messages);
 
@@ -235,12 +235,12 @@ namespace ModTool {
         }
 
         private void LoadAssemblies() {
-            foreach (string path in assemblyFiles) {
+            foreach (var path in assemblyFiles) {
                 if (!File.Exists(path))
                     continue;
 
                 try {
-                    Assembly assembly = Assembly.Load(File.ReadAllBytes(path));
+                    var assembly = Assembly.Load(File.ReadAllBytes(path));
                     assembly.GetTypes();
                     assemblies.Add(assembly);
                 } catch (Exception e) {
@@ -256,7 +256,7 @@ namespace ModTool {
                 if (assetsResource.assetBundle == null)
                     throw new Exception("Could not load assets.");
 
-                GameObject[] prefabs = assetsResource.assetBundle.LoadAllAssets<GameObject>();
+                var prefabs = assetsResource.assetBundle.LoadAllAssets<GameObject>();
                 _prefabs.AddRange(prefabs);
             } catch (Exception e) {
                 LogUtility.LogException(e);
@@ -303,10 +303,10 @@ namespace ModTool {
 
             var loadingResources = resources.Where(r => r.canLoad);
 
-            int count = loadingResources.Count();
+            var count = loadingResources.Count();
 
             while (true) {
-                bool isDone = true;
+                var isDone = true;
                 float progress = 0;
 
                 foreach (var resource in loadingResources) {
@@ -328,7 +328,7 @@ namespace ModTool {
 
             _scenes.ForEach(s => s.Unload());
 
-            foreach (IModHandler loader in GetInstances<IModHandler>()) {
+            foreach (var loader in GetInstances<IModHandler>()) {
                 loader.OnUnloaded();
             }
         }
@@ -367,7 +367,7 @@ namespace ModTool {
 
         protected override void OnLoadResumed() {
             //resume scene loading
-            foreach (ModScene scene in _scenes) {
+            foreach (var scene in _scenes) {
                 if (scene.loadState == ResourceLoadState.Cancelling)
                     scene.Load();
             }
@@ -376,7 +376,7 @@ namespace ModTool {
         }
 
         protected override void OnLoaded() {
-            foreach (IModHandler loader in GetInstances<IModHandler>())
+            foreach (var loader in GetInstances<IModHandler>())
                 loader.OnLoaded(contentHandler);
 
             base.OnLoaded();
@@ -397,8 +397,8 @@ namespace ModTool {
                 return;
             }
 
-            foreach (string assemblyName in _assemblyNames) {
-                foreach (string otherAssemblyName in other.assemblyNames) {
+            foreach (var assemblyName in _assemblyNames) {
+                foreach (var otherAssemblyName in other.assemblyNames) {
                     if (assemblyName == otherAssemblyName) {
                         LogUtility.LogWarning("Assembly " + other.name + "/" + otherAssemblyName +
                                               " conflicting with " + name + "/" + assemblyName);
@@ -411,8 +411,8 @@ namespace ModTool {
                 }
             }
 
-            foreach (string sceneName in sceneNames) {
-                foreach (string otherSceneName in other.sceneNames) {
+            foreach (var sceneName in sceneNames) {
+                foreach (var otherSceneName in other.sceneNames) {
                     if (sceneName == otherSceneName) {
                         LogUtility.LogWarning("Scene " + other.name + "/" + otherSceneName + " conflicting with " +
                                               name + "/" + sceneName);
@@ -431,7 +431,7 @@ namespace ModTool {
         /// </summary>
         /// <param name="mods">A collection of Mods</param>
         public void UpdateConflicts(IEnumerable<Mod> mods) {
-            foreach (Mod mod in mods) {
+            foreach (var mod in mods) {
                 UpdateConflicts(mod);
             }
         }
@@ -527,9 +527,9 @@ namespace ModTool {
         /// <typeparam name="T">The Component that will be looked for.</typeparam>
         /// <returns>An array of found Components of Type T.</returns>
         public T[] GetComponentsInPrefabs<T>() {
-            List<T> components = new List<T>();
+            var components = new List<T>();
 
-            foreach (GameObject prefab in prefabs) {
+            foreach (var prefab in prefabs) {
                 components.AddRange(prefab.GetComponentsInChildren<T>());
             }
 
@@ -545,9 +545,9 @@ namespace ModTool {
             if (!typeof(T).IsSubclassOf(typeof(Component)))
                 throw new ArgumentException(typeof(T).Name + " is not a component.");
 
-            List<T> components = new List<T>();
+            var components = new List<T>();
 
-            foreach (ModScene scene in _scenes) {
+            foreach (var scene in _scenes) {
                 components.AddRange(scene.GetComponentsInScene<T>());
             }
 
@@ -563,12 +563,12 @@ namespace ModTool {
         /// <param name="args">Optional arguments for the Type's constructor</param>
         /// <returns>A List of Instances of Types that implement or derive from Type T</returns>
         public T[] GetInstances<T>(params object[] args) {
-            List<T> instances = new List<T>();
+            var instances = new List<T>();
 
             if (loadState != ResourceLoadState.Loaded)
                 return instances.ToArray();
 
-            foreach (Assembly assembly in assemblies) {
+            foreach (var assembly in assemblies) {
                 try {
                     instances.AddRange(GetInstances<T>(assembly, args));
                 } catch (Exception e) {
@@ -580,9 +580,9 @@ namespace ModTool {
         }
 
         private T[] GetInstances<T>(Assembly assembly, params object[] args) {
-            List<T> instances = new List<T>();
+            var instances = new List<T>();
 
-            foreach (Type type in assembly.GetTypes()) {
+            foreach (var type in assembly.GetTypes()) {
                 if (!typeof(T).IsAssignableFrom(type))
                     continue;
 
@@ -600,7 +600,7 @@ namespace ModTool {
                 }
 
                 if (type.IsSubclassOf(typeof(Component))) {
-                    foreach (Component component in GetComponents(type)) {
+                    foreach (var component in GetComponents(type)) {
                         instances.Add((T) (object) component);
                     }
 
@@ -608,7 +608,7 @@ namespace ModTool {
                 }
 
                 try {
-                    T instance = (T) Activator.CreateInstance(type, args);
+                    var instance = (T) Activator.CreateInstance(type, args);
                     instances.Add(instance);
                     allInstances.Add(type, instance);
                 } catch (Exception e) {
@@ -623,9 +623,9 @@ namespace ModTool {
         }
 
         private static Component[] GetComponents(Type componentType) {
-            List<Component> components = new List<Component>();
+            var components = new List<Component>();
 
-            for (int i = 0; i < SceneManager.sceneCount; i++) {
+            for (var i = 0; i < SceneManager.sceneCount; i++) {
                 components.AddRange(SceneManager.GetSceneAt(i).GetComponentsInScene(componentType));
             }
 

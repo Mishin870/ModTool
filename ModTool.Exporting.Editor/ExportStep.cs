@@ -108,16 +108,16 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static bool VerifyAssemblies() {
-            List<string> assemblies = AssemblyUtility.GetAssemblies(assetsDirectory, AssemblyFilter.ModAssemblies);
+            var assemblies = AssemblyUtility.GetAssemblies(assetsDirectory, AssemblyFilter.ModAssemblies);
 
-            foreach (string scriptAssembly in scriptAssemblies) {
-                string scriptAssemblyFile = Path.Combine(assemblyDirectory, scriptAssembly);
+            foreach (var scriptAssembly in scriptAssemblies) {
+                var scriptAssemblyFile = Path.Combine(assemblyDirectory, scriptAssembly);
 
                 if (File.Exists(scriptAssemblyFile))
                     assemblies.Add(scriptAssemblyFile);
             }
 
-            List<string> messages = new List<string>();
+            var messages = new List<string>();
 
             AssemblyVerifier.VerifyAssemblies(assemblies, messages);
 
@@ -150,7 +150,7 @@ namespace ModTool.Exporting.Editor {
             data.scenes = GetAssets("t:scene");
             data.scripts = GetAssets("t:monoscript");
 
-            ModContent content = ExportSettings.content;
+            var content = ExportSettings.content;
 
             if (data.assets.Count == 0)
                 content &= ~ModContent.Assets;
@@ -163,19 +163,19 @@ namespace ModTool.Exporting.Editor {
         }
 
         private List<Asset> GetAssets(string filter) {
-            List<Asset> assets = new List<Asset>();
+            var assets = new List<Asset>();
 
-            foreach (string path in AssetUtility.GetAssets(filter))
+            foreach (var path in AssetUtility.GetAssets(filter))
                 assets.Add(new Asset(path));
 
             return assets;
         }
 
         private List<Asset> GetAssemblies() {
-            List<Asset> assemblies = new List<Asset>();
+            var assemblies = new List<Asset>();
 
-            foreach (string path in AssemblyUtility.GetAssemblies(assetsDirectory, AssemblyFilter.ModAssemblies)) {
-                Asset assembly = new Asset(path);
+            foreach (var path in AssemblyUtility.GetAssemblies(assetsDirectory, AssemblyFilter.ModAssemblies)) {
+                var assembly = new Asset(path);
                 assembly.Move(modToolDirectory);
                 assemblies.Add(assembly);
             }
@@ -202,16 +202,16 @@ namespace ModTool.Exporting.Editor {
 
             Directory.CreateDirectory(tempAssemblyDirectory);
 
-            foreach (Asset asset in data.assets)
+            foreach (var asset in data.assets)
                 asset.Backup();
 
-            foreach (Asset scene in data.scenes)
+            foreach (var scene in data.scenes)
                 scene.Backup();
 
-            foreach (Asset script in data.scripts)
+            foreach (var script in data.scripts)
                 script.Backup();
 
-            foreach (string path in Directory.GetFiles(assemblyDirectory))
+            foreach (var path in Directory.GetFiles(assemblyDirectory))
                 File.Copy(path, Path.Combine(tempAssemblyDirectory, Path.GetFileName(path)));
         }
     }
@@ -225,28 +225,28 @@ namespace ModTool.Exporting.Editor {
             if ((data.content & ModContent.Code) != ModContent.Code)
                 return;
 
-            foreach (Asset script in data.scripts)
+            foreach (var script in data.scripts)
                 script.Delete();
 
-            string prefix = data.prefix.Replace(" ", "");
+            var prefix = data.prefix.Replace(" ", "");
 
             if (!string.IsNullOrEmpty(ExportSettings.version))
                 prefix += ExportSettings.version.Replace(" ", "") + "-";
 
-            List<string> searchDirectories = GetSearchDirectories();
+            var searchDirectories = GetSearchDirectories();
 
-            foreach (string scriptAssembly in scriptAssemblies) {
-                string scriptAssemblyPath = Path.Combine(tempAssemblyDirectory, scriptAssembly);
+            foreach (var scriptAssembly in scriptAssemblies) {
+                var scriptAssemblyPath = Path.Combine(tempAssemblyDirectory, scriptAssembly);
 
                 if (!File.Exists(scriptAssemblyPath))
                     continue;
 
-                AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(scriptAssemblyPath);
-                AssemblyNameDefinition assemblyName = assembly.Name;
+                var assembly = AssemblyDefinition.ReadAssembly(scriptAssemblyPath);
+                var assemblyName = assembly.Name;
 
-                DefaultAssemblyResolver resolver = (DefaultAssemblyResolver) assembly.MainModule.AssemblyResolver;
+                var resolver = (DefaultAssemblyResolver) assembly.MainModule.AssemblyResolver;
 
-                foreach (string searchDirectory in searchDirectories)
+                foreach (var searchDirectory in searchDirectories)
                     resolver.AddSearchDirectory(searchDirectory);
 
                 assemblyName.Name = prefix + assemblyName.Name;
@@ -270,7 +270,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static List<string> GetSearchDirectories() {
-            List<string> searchDirectories = new List<string>() {
+            var searchDirectories = new List<string>() {
                 Path.GetDirectoryName(typeof(UnityEngine.Object).Assembly.Location),
                 assetsDirectory
             };
@@ -296,12 +296,12 @@ namespace ModTool.Exporting.Editor {
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.DontDownloadFromCacheServer);
 
             if ((data.content & ModContent.Assets) == ModContent.Assets) {
-                foreach (Asset asset in data.assets)
+                foreach (var asset in data.assets)
                     asset.SetAssetBundle(ExportSettings.name, "assets");
             }
 
             if ((data.content & ModContent.Scenes) == ModContent.Scenes) {
-                foreach (Asset scene in data.scenes) {
+                foreach (var scene in data.scenes) {
                     scene.name = data.prefix + scene.name;
                     scene.SetAssetBundle(ExportSettings.name, "scenes");
                 }
@@ -309,22 +309,22 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static void UpdateReferences(IEnumerable<Asset> assets, IEnumerable<Asset> scriptAssemblies) {
-            foreach (Asset scriptAssembly in scriptAssemblies)
+            foreach (var scriptAssembly in scriptAssemblies)
                 UpdateReferences(assets, scriptAssembly);
         }
 
         private static void UpdateReferences(IEnumerable<Asset> assets, Asset scriptAssembly) {
-            string assemblyGuid = AssetDatabase.AssetPathToGUID(scriptAssembly.assetPath);
-            ModuleDefinition module = ModuleDefinition.ReadModule(scriptAssembly.assetPath);
+            var assemblyGuid = AssetDatabase.AssetPathToGUID(scriptAssembly.assetPath);
+            var module = ModuleDefinition.ReadModule(scriptAssembly.assetPath);
 
-            foreach (Asset asset in assets)
+            foreach (var asset in assets)
                 UpdateReferences(asset, assemblyGuid, module.Types);
         }
 
         private static void UpdateReferences(Asset asset, string assemblyGuid, IEnumerable<TypeDefinition> types) {
-            string[] lines = File.ReadAllLines(asset.assetPath);
+            var lines = File.ReadAllLines(asset.assetPath);
 
-            for (int i = 0; i < lines.Length; i++) {
+            for (var i = 0; i < lines.Length; i++) {
                 //Note: Line references script file - 11500000 is Unity's YAML class ID for MonoScript
                 if (lines[i].Contains("11500000"))
                     lines[i] = UpdateReference(lines[i], assemblyGuid, types);
@@ -334,14 +334,14 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static string UpdateReference(string line, string assemblyGuid, IEnumerable<TypeDefinition> types) {
-            string guid = GetGuid(line);
-            string scriptPath = AssetDatabase.GUIDToAssetPath(guid);
-            string scriptName = Path.GetFileNameWithoutExtension(scriptPath);
+            var guid = GetGuid(line);
+            var scriptPath = AssetDatabase.GUIDToAssetPath(guid);
+            var scriptName = Path.GetFileNameWithoutExtension(scriptPath);
 
-            foreach (TypeDefinition type in types) {
+            foreach (var type in types) {
                 //script's type found, replace reference
                 if (type.Name == scriptName) {
-                    string fileID = GetTypeID(type.Namespace, type.Name).ToString();
+                    var fileID = GetTypeID(type.Namespace, type.Name).ToString();
                     line = line.Replace("11500000", fileID);
                     return line.Replace(guid, assemblyGuid);
                 }
@@ -351,9 +351,9 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static string GetGuid(string line) {
-            string[] properties = Regex.Split(line, ", ");
+            var properties = Regex.Split(line, ", ");
 
-            foreach (string property in properties) {
+            foreach (var property in properties) {
                 if (property.Contains("guid: "))
                     return property.Remove(0, 6);
             }
@@ -366,14 +366,14 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static int GetTypeID(string nameSpace, string typeName) {
-            string toBeHashed = "s\0\0\0" + nameSpace + typeName;
+            var toBeHashed = "s\0\0\0" + nameSpace + typeName;
 
-            using (MD4 hash = new MD4()) {
-                byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+            using (var hash = new MD4()) {
+                var hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
 
-                int result = 0;
+                var result = 0;
 
-                for (int i = 3; i >= 0; --i) {
+                for (var i = 3; i >= 0; --i) {
                     result <<= 8;
                     result |= hashed[i];
                 }
@@ -400,17 +400,17 @@ namespace ModTool.Exporting.Editor {
 
             Directory.CreateDirectory(tempModDirectory);
 
-            foreach (Asset assembly in data.assemblies)
+            foreach (var assembly in data.assemblies)
                 assembly.Copy(tempModDirectory);
 
-            foreach (Asset assembly in data.scriptAssemblies)
+            foreach (var assembly in data.scriptAssemblies)
                 assembly.Copy(tempModDirectory);
 
-            ModPlatform platforms = ExportSettings.platforms;
+            var platforms = ExportSettings.platforms;
 
             BuildAssetBundles(platforms);
 
-            ModInfo modInfo = new ModInfo(
+            var modInfo = new ModInfo(
                 ExportSettings.name,
                 ExportSettings.author,
                 ExportSettings.description,
@@ -428,10 +428,10 @@ namespace ModTool.Exporting.Editor {
         }
 
         private void BuildAssetBundles(ModPlatform platforms) {
-            List<BuildTarget> buildTargets = platforms.GetBuildTargets();
+            var buildTargets = platforms.GetBuildTargets();
 
-            foreach (BuildTarget buildTarget in buildTargets) {
-                string platformSubdirectory = Path.Combine(tempModDirectory, buildTarget.GetModPlatform().ToString());
+            foreach (var buildTarget in buildTargets) {
+                var platformSubdirectory = Path.Combine(tempModDirectory, buildTarget.GetModPlatform().ToString());
                 Directory.CreateDirectory(platformSubdirectory);
                 BuildPipeline.BuildAssetBundles(platformSubdirectory, BuildAssetBundleOptions.None, buildTarget);
             }
@@ -453,13 +453,13 @@ namespace ModTool.Exporting.Editor {
         private static void CopyAll(string sourceDirectory, string targetDirectory) {
             Directory.CreateDirectory(targetDirectory);
 
-            foreach (string file in Directory.GetFiles(sourceDirectory)) {
-                string fileName = Path.GetFileName(file);
+            foreach (var file in Directory.GetFiles(sourceDirectory)) {
+                var fileName = Path.GetFileName(file);
                 File.Copy(file, Path.Combine(targetDirectory, fileName), true);
             }
 
-            foreach (string subDirectory in Directory.GetDirectories(sourceDirectory)) {
-                string targetSubDirectory = Path.Combine(targetDirectory, Path.GetFileName(subDirectory));
+            foreach (var subDirectory in Directory.GetDirectories(sourceDirectory)) {
+                var targetSubDirectory = Path.Combine(targetDirectory, Path.GetFileName(subDirectory));
                 CopyAll(subDirectory, targetSubDirectory);
             }
         }
@@ -471,16 +471,16 @@ namespace ModTool.Exporting.Editor {
         }
 
         internal override void Execute(ExportData data) {
-            foreach (Asset scriptAssembly in data.scriptAssemblies)
+            foreach (var scriptAssembly in data.scriptAssemblies)
                 scriptAssembly.Delete();
 
-            foreach (Asset asset in data.assets)
+            foreach (var asset in data.assets)
                 asset.Restore();
 
-            foreach (Asset scene in data.scenes)
+            foreach (var scene in data.scenes)
                 scene.Restore();
 
-            foreach (Asset script in data.scripts)
+            foreach (var script in data.scripts)
                 script.Restore();
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);

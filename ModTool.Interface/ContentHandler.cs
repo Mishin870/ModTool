@@ -46,7 +46,7 @@ namespace ModTool.Interface {
         /// <param name="gameObject">The GameObject to which to add the Component.</param>
         /// <returns>The added Component.</returns>
         public T AddComponent<T>(GameObject gameObject) where T : Component {
-            T component = gameObject.AddComponent<T>();
+            var component = gameObject.AddComponent<T>();
 
             InitializeComponent(component);
 
@@ -60,7 +60,7 @@ namespace ModTool.Interface {
         /// <param name="gameObject">The GameObject to which to add the Component.</param>
         /// <returns>The added Component.</returns>
         public Component AddComponent(System.Type componentType, GameObject gameObject) {
-            Component component = gameObject.AddComponent(componentType);
+            var component = gameObject.AddComponent(componentType);
 
             InitializeComponent(component);
 
@@ -69,26 +69,26 @@ namespace ModTool.Interface {
 
         private void InitializeComponent(Component component) {
             if (component is IModHandler) {
-                IModHandler modHandler = component as IModHandler;
+                var modHandler = component as IModHandler;
                 modHandler.OnLoaded(this);
             }
         }
 
         private void InitializeGameObject(GameObject go) {
-            Component[] components = go.GetComponentsInChildren<Component>();
+            var components = go.GetComponentsInChildren<Component>();
 
-            foreach (Component component in components) {
+            foreach (var component in components) {
                 InitializeComponent(component);
             }
         }
 
         private void InitializeObject(Object obj) {
             if (obj is GameObject) {
-                GameObject gameObject = obj as GameObject;
+                var gameObject = obj as GameObject;
                 gameObjects.Add(gameObject);
                 InitializeGameObject(gameObject);
             } else if (obj is Component) {
-                Component component = obj as Component;
+                var component = obj as Component;
                 gameObjects.Add(component.gameObject);
                 InitializeGameObject(component.gameObject);
             }
@@ -101,7 +101,7 @@ namespace ModTool.Interface {
         /// <param name="original">An existing Object to copy.</param>
         /// <returns>The new Object.</returns>
         public T Instantiate<T>(T original) where T : UnityEngine.Object {
-            T obj = UnityEngine.Object.Instantiate(original);
+            var obj = UnityEngine.Object.Instantiate(original);
 
             InitializeObject(obj);
 
@@ -141,7 +141,7 @@ namespace ModTool.Interface {
                 return;
 
             if (obj is GameObject) {
-                GameObject gameObject = obj as GameObject;
+                var gameObject = obj as GameObject;
 
                 if (gameObjects.Contains(gameObject))
                     gameObjects.Remove(gameObject);
@@ -154,7 +154,7 @@ namespace ModTool.Interface {
         /// Destroy all instantiated GameObjects.
         /// </summary>
         public void Clear() {
-            foreach (GameObject gameObject in gameObjects) {
+            foreach (var gameObject in gameObjects) {
                 if (gameObject != null) {
                     Object.Destroy(gameObject);
                 }

@@ -11,7 +11,7 @@ namespace ModTool.Exporting.Editor {
         public string name {
             get { return Path.GetFileNameWithoutExtension(assetPath); }
             set {
-                string result = AssetDatabase.RenameAsset(assetPath, value);
+                var result = AssetDatabase.RenameAsset(assetPath, value);
 
                 if (string.IsNullOrEmpty(result))
                     _assetPath = Path.Combine(Path.GetDirectoryName(assetPath), value + Path.GetExtension(assetPath));
@@ -21,7 +21,7 @@ namespace ModTool.Exporting.Editor {
         public string assetPath {
             get { return _assetPath; }
             set {
-                string result = AssetDatabase.MoveAsset(assetPath, value);
+                var result = AssetDatabase.MoveAsset(assetPath, value);
 
                 if (string.IsNullOrEmpty(result))
                     _assetPath = value;
@@ -47,7 +47,7 @@ namespace ModTool.Exporting.Editor {
 
         public void Backup() {
             _backupPath = originalPath.Replace("Assets", Asset.backupDirectory);
-            string backupDirectory = Path.GetDirectoryName(backupPath);
+            var backupDirectory = Path.GetDirectoryName(backupPath);
 
             if (!Directory.Exists(backupDirectory))
                 Directory.CreateDirectory(backupDirectory);
@@ -69,7 +69,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         public void SetAssetBundle(string assetBundleName, string assetBundleVariant = "") {
-            AssetImporter importer = AssetImporter.GetAtPath(assetPath);
+            var importer = AssetImporter.GetAtPath(assetPath);
 
             importer.assetBundleName = assetBundleName;
 
@@ -91,7 +91,7 @@ namespace ModTool.Exporting.Editor {
             if (!File.Exists(assetPath))
                 return;
 
-            string targetPath = Path.Combine(targetDirectory, Path.GetFileName(assetPath));
+            var targetPath = Path.Combine(targetDirectory, Path.GetFileName(assetPath));
 
             File.Copy(assetPath, targetPath);
         }

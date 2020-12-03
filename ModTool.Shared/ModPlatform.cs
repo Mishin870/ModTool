@@ -86,7 +86,7 @@ namespace ModTool.Shared {
         /// <param name="self">A ModPlatform instance.</param>
         /// <returns>A List of equivalent RuntimePlatforms.</returns>
         public static List<RuntimePlatform> GetRuntimePlatforms(this ModPlatform self) {
-            List<RuntimePlatform> runtimePlatforms = new List<RuntimePlatform>();
+            var runtimePlatforms = new List<RuntimePlatform>();
 
             var values = Enum.GetValues(typeof(RuntimePlatform));
 

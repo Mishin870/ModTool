@@ -41,10 +41,10 @@ namespace ModTool.Exporting.Editor {
         }
 
         private void ProcessMessage(IEnumerable<byte> bytes) {
-            foreach (byte b in bytes) {
-                int c = _bytesProcessed & 63;
-                int i = c >> 2;
-                int s = (c & 3) << 3;
+            foreach (var b in bytes) {
+                var c = _bytesProcessed & 63;
+                var i = c >> 2;
+                var s = (c & 3) << 3;
 
                 _x[i] = (_x[i] & ~((uint) 255 << s)) | ((uint) b << s);
 
@@ -57,7 +57,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static IEnumerable<byte> Bytes(byte[] bytes, int offset, int length) {
-            for (int i = offset; i < length; i++) {
+            for (var i = offset; i < length; i++) {
                 yield return bytes[i];
             }
         }
@@ -70,7 +70,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private IEnumerable<byte> Repeat(byte value, int count) {
-            for (int i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 yield return value;
             }
         }
@@ -83,26 +83,26 @@ namespace ModTool.Exporting.Editor {
         }
 
         private void Process16WordBlock() {
-            uint aa = _a;
-            uint bb = _b;
-            uint cc = _c;
-            uint dd = _d;
+            var aa = _a;
+            var bb = _b;
+            var cc = _c;
+            var dd = _d;
 
-            foreach (int k in new[] {0, 4, 8, 12}) {
+            foreach (var k in new[] {0, 4, 8, 12}) {
                 aa = Round1Operation(aa, bb, cc, dd, _x[k], 3);
                 dd = Round1Operation(dd, aa, bb, cc, _x[k + 1], 7);
                 cc = Round1Operation(cc, dd, aa, bb, _x[k + 2], 11);
                 bb = Round1Operation(bb, cc, dd, aa, _x[k + 3], 19);
             }
 
-            foreach (int k in new[] {0, 1, 2, 3}) {
+            foreach (var k in new[] {0, 1, 2, 3}) {
                 aa = Round2Operation(aa, bb, cc, dd, _x[k], 3);
                 dd = Round2Operation(dd, aa, bb, cc, _x[k + 4], 5);
                 cc = Round2Operation(cc, dd, aa, bb, _x[k + 8], 9);
                 bb = Round2Operation(bb, cc, dd, aa, _x[k + 12], 13);
             }
 
-            foreach (int k in new[] {0, 2, 1, 3}) {
+            foreach (var k in new[] {0, 2, 1, 3}) {
                 aa = Round3Operation(aa, bb, cc, dd, _x[k], 3);
                 dd = Round3Operation(dd, aa, bb, cc, _x[k + 8], 9);
                 cc = Round3Operation(cc, dd, aa, bb, _x[k + 4], 11);

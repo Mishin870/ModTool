@@ -63,7 +63,7 @@ namespace ModTool.Exporting.Editor {
         /// <param name="self">A ModPlatform Instance.</param>
         /// <returns>A list with equivalent BuildTargets</returns>
         public static List<BuildTarget> GetBuildTargets(this ModPlatform self) {
-            List<BuildTarget> runtimePlatforms = new List<BuildTarget>();
+            var runtimePlatforms = new List<BuildTarget>();
 
             var values = Enum.GetValues(typeof(BuildTarget));
 

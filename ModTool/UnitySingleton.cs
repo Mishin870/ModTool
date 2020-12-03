@@ -17,7 +17,7 @@ namespace ModTool {
                 if (_instance == null) {
                     _instance = FindObjectOfType<T>();
                     if (_instance == null) {
-                        GameObject obj = new GameObject();
+                        var obj = new GameObject();
                         obj.name = typeof(T).Name;
                         _instance = obj.AddComponent<T>();
                     }

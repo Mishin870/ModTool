@@ -80,21 +80,21 @@ namespace ModTool {
         private void DoRefresh() {
             //LogUtility.LogDebug("Refreshing Mod search directory: " + path);
 
-            bool changed = false;
+            var changed = false;
 
-            string[] modInfoPaths = GetModInfoPaths();
+            var modInfoPaths = GetModInfoPaths();
 
-            foreach (string path in _modPaths.Keys.ToArray()) {
+            foreach (var path in _modPaths.Keys.ToArray()) {
                 if (!modInfoPaths.Contains(path)) {
                     changed = true;
                     RemoveModPath(path);
                     continue;
                 }
 
-                DirectoryInfo modDirectory = new DirectoryInfo(Path.GetDirectoryName(path));
+                var modDirectory = new DirectoryInfo(Path.GetDirectoryName(path));
 
-                long currentTicks = DateTime.Now.Ticks;
-                long lastWriteTime = _modPaths[path];
+                var currentTicks = DateTime.Now.Ticks;
+                var lastWriteTime = _modPaths[path];
 
                 if (modDirectory.LastWriteTime.Ticks > lastWriteTime) {
                     changed = true;
@@ -103,7 +103,7 @@ namespace ModTool {
                     continue;
                 }
 
-                foreach (DirectoryInfo directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories)) {
+                foreach (var directory in modDirectory.GetDirectories("*", SearchOption.AllDirectories)) {
                     if (directory.LastWriteTime.Ticks > lastWriteTime) {
                         changed = true;
                         _modPaths[path] = currentTicks;
@@ -112,7 +112,7 @@ namespace ModTool {
                     }
                 }
 
-                foreach (FileInfo file in modDirectory.GetFiles("*", SearchOption.AllDirectories)) {
+                foreach (var file in modDirectory.GetFiles("*", SearchOption.AllDirectories)) {
                     if (file.Extension == ".info")
                         continue;
 
@@ -125,7 +125,7 @@ namespace ModTool {
                 }
             }
 
-            foreach (string path in modInfoPaths) {
+            foreach (var path in modInfoPaths) {
                 if (!_modPaths.ContainsKey(path)) {
                     changed = true;
                     AddModPath(path);

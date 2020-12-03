@@ -12,30 +12,30 @@ namespace ModTool.Exporting.Editor {
     internal class ModSurrogateInitializer {
         [RuntimeInitializeOnLoadMethod]
         private static void InitializeModSurrogate() {
-            List<GameObject> prefabs = new List<GameObject>();
-            List<IResource> scenes = new List<IResource>();
+            var prefabs = new List<GameObject>();
+            var scenes = new List<IResource>();
 
-            List<string> prefabPaths = AssetUtility.GetAssets("t:prefab");
-            foreach (string prefabPath in prefabPaths) {
+            var prefabPaths = AssetUtility.GetAssets("t:prefab");
+            foreach (var prefabPath in prefabPaths) {
                 prefabs.Add(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
             }
 
-            List<string> scenePaths = AssetUtility.GetAssets("t:scene");
-            foreach (string scenePath in scenePaths) {
-                string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+            var scenePaths = AssetUtility.GetAssets("t:scene");
+            foreach (var scenePath in scenePaths) {
+                var sceneName = Path.GetFileNameWithoutExtension(scenePath);
                 scenes.Add(new ModSceneSurrogate(sceneName));
             }
 
-            ModSurrogate mod = new ModSurrogate(ExportSettings.name);
+            var mod = new ModSurrogate(ExportSettings.name);
 
-            ContentHandler contentHandler = new ContentHandler(mod, scenes.AsReadOnly(), prefabs.AsReadOnly());
+            var contentHandler = new ContentHandler(mod, scenes.AsReadOnly(), prefabs.AsReadOnly());
 
             InitializeModHandlers(contentHandler);
         }
 
         private static void InitializeModHandlers(ContentHandler contentHandler) {
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
-                foreach (Type type in assembly.GetTypes()) {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                foreach (var type in assembly.GetTypes()) {
                     if (typeof(IModHandler).IsAssignableFrom(type)) {
                         if (type.IsAbstract)
                             continue;
@@ -43,7 +43,7 @@ namespace ModTool.Exporting.Editor {
                             continue;
 
                         if (type.IsSubclassOf(typeof(Component))) {
-                            foreach (Component component in GetComponents(type)) {
+                            foreach (var component in GetComponents(type)) {
                                 ((IModHandler) component).OnLoaded(contentHandler);
                             }
 
@@ -51,7 +51,7 @@ namespace ModTool.Exporting.Editor {
                         }
 
                         try {
-                            IModHandler loadHandler = (IModHandler) Activator.CreateInstance(type);
+                            var loadHandler = (IModHandler) Activator.CreateInstance(type);
                             loadHandler.OnLoaded(contentHandler);
                         } catch (Exception e) {
                             if (e is MissingMethodException)
@@ -63,7 +63,7 @@ namespace ModTool.Exporting.Editor {
         }
 
         private static Component[] GetComponents(Type componentType) {
-            List<Component> components = new List<Component>();
+            var components = new List<Component>();
 
             foreach (Component component in Resources.FindObjectsOfTypeAll(componentType)) {
                 if ((component.hideFlags & HideFlags.HideInInspector) == HideFlags.HideInInspector)

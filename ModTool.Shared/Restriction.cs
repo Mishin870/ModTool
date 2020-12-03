@@ -78,7 +78,7 @@ namespace ModTool.Shared.Verification {
         }
 
         private bool PresentInMethodRecursive(MethodReference method) {
-            HashSet<string> visited = new HashSet<string>();
+            var visited = new HashSet<string>();
 
             return PresentInMethodRecursive(method, visited);
         }
@@ -101,17 +101,17 @@ namespace ModTool.Shared.Verification {
 
                 visited.Add(resolvedMethod.FullName);
 
-                foreach (VariableDefinition variable in resolvedMethod.Body.Variables) {
+                foreach (var variable in resolvedMethod.Body.Variables) {
                     if (PresentMethodVariable(variable))
                         return true;
                 }
 
-                foreach (Instruction instruction in resolvedMethod.Body.Instructions) {
+                foreach (var instruction in resolvedMethod.Body.Instructions) {
                     if (instruction.Operand == null)
                         continue;
 
                     if (instruction.Operand is MemberReference) {
-                        MemberReference member = instruction.Operand as MemberReference;
+                        var member = instruction.Operand as MemberReference;
 
                         if (member.Module.Assembly.Name.Name == "ModTool.Interface")
                             continue;
@@ -269,12 +269,12 @@ namespace ModTool.Shared.Verification {
 
         protected override bool Present(MemberReference member) {
             if (member is FieldReference) {
-                FieldReference field = member as FieldReference;
+                var field = member as FieldReference;
                 return field.FieldType.Name == type.name && field.FieldType.Namespace == type.nameSpace;
             }
 
             if (member is PropertyReference) {
-                PropertyReference property = member as PropertyReference;
+                var property = member as PropertyReference;
                 return property.PropertyType.Name == type.name && property.PropertyType.Namespace == type.nameSpace;
             }
 
@@ -314,7 +314,7 @@ namespace ModTool.Shared.Verification {
 
         protected override bool Present(MemberReference member) {
             if (member is TypeReference) {
-                TypeDefinition typeDefinition = (member as TypeReference).Resolve();
+                var typeDefinition = (member as TypeReference).Resolve();
                 return typeDefinition.IsSubClassOf(type);
             }
 

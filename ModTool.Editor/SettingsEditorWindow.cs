@@ -15,7 +15,7 @@ namespace ModTool.Editor {
 
         [MenuItem("Tools/ModTool/Settings")]
         public static void ShowWindow() {
-            SettingsEditorWindow window = GetWindow<SettingsEditorWindow>();
+            var window = GetWindow<SettingsEditorWindow>();
 
             window.maxSize = new Vector2(385f, 255);
             window.minSize = new Vector2(300f, 162);

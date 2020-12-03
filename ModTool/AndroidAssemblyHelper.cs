@@ -11,19 +11,19 @@ namespace ModTool {
         /// </summary>
         public static void CopyAssemblies() {
             if (Application.platform == RuntimePlatform.Android) {
-                string assemblyFolderPath = Path.Combine(Application.persistentDataPath, "Assemblies");
+                var assemblyFolderPath = Path.Combine(Application.persistentDataPath, "Assemblies");
 
                 if (!Directory.Exists(assemblyFolderPath))
                     Directory.CreateDirectory(assemblyFolderPath);
 
-                AndroidJavaClass assemblyHelper = new AndroidJavaClass("hellomeow.assemblyhelper.AssemblyHelper");
+                var assemblyHelper = new AndroidJavaClass("hellomeow.assemblyhelper.AssemblyHelper");
                 assemblyHelper.CallStatic<bool>("CopyAssemblies", assemblyFolderPath, GetAndroidActivity());
             }
         }
 
         private static AndroidJavaObject GetAndroidActivity() {
-            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             return currentActivity;
         }
     }

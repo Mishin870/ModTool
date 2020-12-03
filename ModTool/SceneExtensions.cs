@@ -28,8 +28,8 @@ namespace ModTool {
                 return default(T);
             }
 
-            foreach (GameObject go in self.GetRootGameObjects()) {
-                T component = go.GetComponentInChildren<T>(true);
+            foreach (var go in self.GetRootGameObjects()) {
+                var component = go.GetComponentInChildren<T>(true);
                 if (component != null) {
                     return component;
                 }
@@ -49,8 +49,8 @@ namespace ModTool {
                 return null;
             }
 
-            foreach (GameObject go in self.GetRootGameObjects()) {
-                Component component = go.GetComponentInChildren(componentType, true);
+            foreach (var go in self.GetRootGameObjects()) {
+                var component = go.GetComponentInChildren(componentType, true);
                 if (component != null) {
                     return component;
                 }
@@ -66,13 +66,13 @@ namespace ModTool {
         /// <param name="self">A Scene instance.</param>
         /// <returns>An array of found Components of Type T.</returns>
         public static T[] GetComponentsInScene<T>(this Scene self) {
-            List<T> components = new List<T>();
+            var components = new List<T>();
 
             if (!self.isLoaded || !self.IsValid()) {
                 return components.ToArray();
             }
 
-            foreach (GameObject go in self.GetRootGameObjects()) {
+            foreach (var go in self.GetRootGameObjects()) {
                 components.AddRange(go.GetComponentsInChildren<T>(true));
             }
 
@@ -86,13 +86,13 @@ namespace ModTool {
         /// <param name="componentType">A Type that derives from Component.</param>
         /// <returns>An array of found Components of Type componentType.</returns>
         public static Component[] GetComponentsInScene(this Scene self, System.Type componentType) {
-            List<Component> components = new List<Component>();
+            var components = new List<Component>();
 
             if (!self.isLoaded || !self.IsValid()) {
                 return components.ToArray();
             }
 
-            foreach (GameObject go in self.GetRootGameObjects()) {
+            foreach (var go in self.GetRootGameObjects()) {
                 components.AddRange(go.GetComponentsInChildren(componentType, true));
             }
 
@@ -106,7 +106,7 @@ namespace ModTool {
         /// <param name="original">An existing object that you want to make a copy of.</param>
         /// <returns>The instantiated GameObject.</returns>
         public static GameObject Instantiate(this Scene self, GameObject original) {
-            GameObject o = Object.Instantiate(original);
+            var o = Object.Instantiate(original);
 
             if (!self.isLoaded || !self.IsValid()) {
                 return o;

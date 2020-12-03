@@ -48,7 +48,7 @@ namespace ModTool.Exporting.Editor {
             _content.intValue = content.DoMaskField("Content*:", _content.intValue);
             LogUtility.logLevel = (LogLevel) EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
 
-            bool enabled = GUI.enabled;
+            var enabled = GUI.enabled;
 
             GUILayout.BeginHorizontal();
 
@@ -59,7 +59,7 @@ namespace ModTool.Exporting.Editor {
             GUI.enabled = enabled;
 
             if (GUILayout.Button("...", GUILayout.Width(30))) {
-                string selectedDirectory =
+                var selectedDirectory =
                     EditorUtility.SaveFolderPanel("Choose output directory", _outputDirectory.stringValue, "");
                 if (!string.IsNullOrEmpty(selectedDirectory))
                     _outputDirectory.stringValue = selectedDirectory;
@@ -77,9 +77,9 @@ namespace ModTool.Exporting.Editor {
         }
 
         private string GetShortString(string str) {
-            int maxWidth = (int) EditorGUIUtility.currentViewWidth - 252;
-            int cutoffIndex = Mathf.Max(0, str.Length - 7 - (maxWidth / 7));
-            string shortString = str.Substring(cutoffIndex);
+            var maxWidth = (int) EditorGUIUtility.currentViewWidth - 252;
+            var cutoffIndex = Mathf.Max(0, str.Length - 7 - (maxWidth / 7));
+            var shortString = str.Substring(cutoffIndex);
             if (cutoffIndex > 0)
                 shortString = "..." + shortString;
             return shortString;
