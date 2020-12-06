@@ -90,9 +90,8 @@ namespace ModTool.Editor {
             pluginImporter.SaveAndReimport();
         }
 
-        private static void GetApiAssemblies(string path, List<string> assemblies) {
+        private static void GetApiAssemblies(string path, ICollection<string> assemblies) {
             var assemblyPaths = AssemblyUtility.GetAssemblies(path, AssemblyFilter.ApiAssemblies);
-
             var modToolDirectory = AssetUtility.GetModToolDirectory();
 
             foreach (var assemblyPath in assemblyPaths) {

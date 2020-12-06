@@ -5,6 +5,7 @@ using ModTool.Shared;
 namespace ModTool.Exporting.Editor {
     [CustomEditor(typeof(ExportSettings))]
     public class ExportSettingsEditor : UnityEditor.Editor {
+        private SerializedProperty _id;
         private SerializedProperty _name;
         private SerializedProperty _author;
         private SerializedProperty _description;
@@ -17,6 +18,7 @@ namespace ModTool.Exporting.Editor {
         private FilteredEnumMaskField content;
 
         void OnEnable() {
+            _id = serializedObject.FindProperty("_id");
             _name = serializedObject.FindProperty("_name");
             _author = serializedObject.FindProperty("_author");
             _description = serializedObject.FindProperty("_description");
@@ -36,7 +38,8 @@ namespace ModTool.Exporting.Editor {
 
             GUILayout.Space(5);
 
-            EditorGUILayout.PropertyField(_name, new GUIContent("Mod Name*:"));
+            EditorGUILayout.PropertyField(_id, new GUIContent("Unique ID*:"));
+            EditorGUILayout.PropertyField(_name, new GUIContent("Name*:"));
             EditorGUILayout.PropertyField(_author, new GUIContent("Author:"));
             EditorGUILayout.PropertyField(_version, new GUIContent("Version:"));
 

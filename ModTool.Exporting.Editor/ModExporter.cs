@@ -84,7 +84,7 @@ namespace ModTool.Exporting.Editor {
         private void StartExport() {
             data = new ExportData();
 
-            LogUtility.LogInfo("Exporting Mod: " + ExportSettings.name);
+            LogUtility.LogInfo("Exporting Mod: " + ExportSettings.id);
 
             ExportStarting?.Invoke();
 

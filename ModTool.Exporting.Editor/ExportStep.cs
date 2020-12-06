@@ -50,7 +50,7 @@ namespace ModTool.Exporting.Editor {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 throw new Exception("Cancelled by user");
 
-            data.prefix = ExportSettings.name + "-";
+            data.prefix = ExportSettings.id + "-";
 
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         }
@@ -87,6 +87,9 @@ namespace ModTool.Exporting.Editor {
         }
 
         private void VerifySettings() {
+            if (string.IsNullOrEmpty(ExportSettings.id))
+                throw new Exception("Mod has no id");
+            
             if (string.IsNullOrEmpty(ExportSettings.name))
                 throw new Exception("Mod has no name");
 
@@ -285,13 +288,13 @@ namespace ModTool.Exporting.Editor {
 
             if ((data.content & ModContent.Assets) == ModContent.Assets) {
                 foreach (var asset in data.assets)
-                    asset.SetAssetBundle(ExportSettings.name, "assets");
+                    asset.SetAssetBundle(ExportSettings.id, "assets");
             }
 
             if ((data.content & ModContent.Scenes) == ModContent.Scenes) {
                 foreach (var scene in data.scenes) {
                     scene.name = data.prefix + scene.name;
-                    scene.SetAssetBundle(ExportSettings.name, "scenes");
+                    scene.SetAssetBundle(ExportSettings.id, "scenes");
                 }
             }
         }
@@ -378,8 +381,8 @@ namespace ModTool.Exporting.Editor {
         private string modDirectory;
 
         internal override void Execute(ExportData data) {
-            tempModDirectory = Path.Combine("Temp", ExportSettings.name);
-            modDirectory = Path.Combine(ExportSettings.outputDirectory, ExportSettings.name);
+            tempModDirectory = Path.Combine("Temp", ExportSettings.id);
+            modDirectory = Path.Combine(ExportSettings.outputDirectory, ExportSettings.id);
 
             if (Directory.Exists(tempModDirectory))
                 Directory.Delete(tempModDirectory, true);

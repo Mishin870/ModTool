@@ -137,12 +137,12 @@ namespace ModTool {
             var modDirectory = Path.GetDirectoryName(path);
             var platformDirectory = Path.Combine(modDirectory, Application.platform.GetModPlatform().ToString());
 
-            var assets = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".assets");
-            var scenes = Path.Combine(platformDirectory, modInfo.name.ToLower() + ".scenes");
+            var assets = Path.Combine(platformDirectory, modInfo.id.ToLower() + ".assets");
+            var scenes = Path.Combine(platformDirectory, modInfo.id.ToLower() + ".scenes");
 
             assemblyFiles = AssemblyUtility.GetAssemblies(modDirectory, AssemblyFilter.ModAssemblies);
-            assetsResource = new AssetBundleResource(name + " assets", assets);
-            scenesResource = new AssetBundleResource(name + " scenes", scenes);
+            assetsResource = new AssetBundleResource(modInfo.id + " assets", assets);
+            scenesResource = new AssetBundleResource(modInfo.id + " scenes", scenes);
 
             isValid = true;
 

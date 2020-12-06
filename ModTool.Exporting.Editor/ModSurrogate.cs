@@ -26,7 +26,7 @@ namespace ModTool.Exporting.Editor {
                 scenes.Add(new ModSceneSurrogate(sceneName));
             }
 
-            var mod = new ModSurrogate(ExportSettings.name);
+            var mod = new ModSurrogate(ExportSettings.id);
 
             var contentHandler = new ContentHandler(mod, scenes.AsReadOnly(), prefabs.AsReadOnly());
 
