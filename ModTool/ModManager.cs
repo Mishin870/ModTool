@@ -128,15 +128,13 @@ namespace ModTool {
         }
 
         private void OnModLoaded(Resource mod) {
-            if (ModLoaded != null)
-                ModLoaded.Invoke((Mod) mod);
+            ModLoaded?.Invoke((Mod) mod);
         }
 
         private void OnModUnloaded(Resource mod) {
             var _mod = (Mod) mod;
 
-            if (ModUnloaded != null)
-                ModUnloaded.Invoke(_mod);
+            ModUnloaded?.Invoke(_mod);
 
             if (queuedRefreshMods.Contains(_mod)) {
                 queuedRefreshMods.Remove(_mod);
@@ -145,24 +143,19 @@ namespace ModTool {
         }
 
         private void OnModLoadCancelled(Resource mod) {
-            if (ModLoadCancelled != null)
-                ModLoadCancelled.Invoke((Mod) mod);
+            ModLoadCancelled?.Invoke((Mod) mod);
         }
 
         private void OnSceneLoaded(ModScene scene) {
-            if (SceneLoaded != null)
-                SceneLoaded.Invoke(scene);
+            SceneLoaded?.Invoke(scene);
         }
 
         private void OnSceneUnloaded(ModScene scene) {
-            if (SceneUnloaded != null)
-                SceneUnloaded.Invoke(scene);
+            SceneUnloaded?.Invoke(scene);
         }
 
         private void OnSceneLoadCancelled(ModScene scene) {
-            if (SceneLoadCancelled != null) {
-                SceneLoadCancelled.Invoke(scene);
-            }
+            SceneLoadCancelled?.Invoke(scene);
         }
 
         /// <summary>
