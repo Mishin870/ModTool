@@ -430,7 +430,7 @@
             Location of mod
             </summary>
         </member>
-        <member name="M:ModTool.Shared.ModInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,ModTool.Shared.ModPlatform,ModTool.Shared.ModContent)">
+        <member name="M:ModTool.Shared.ModInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,ModTool.Shared.ModPlatform,ModTool.Shared.ModContent,System.Collections.Generic.List{ModTool.Shared.Dependency})">
             <summary>
             Initialize a new ModInfo.
             </summary>
@@ -442,6 +442,7 @@
             <param name="content">The Mod's available content types.</param>
             <param name="version">The Mod's version</param>
             <param name="unityVersion"> The version of Unity that the Mod was exported with.</param>
+            <param name="dependencies"> The Mod dependencies.</param>
         </member>
         <member name="M:ModTool.Shared.ModInfo.Save">
             <summary>

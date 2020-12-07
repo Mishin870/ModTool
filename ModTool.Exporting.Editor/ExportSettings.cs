@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using ModTool.Shared;
 using ModTool.Shared.Editor;
 
@@ -11,64 +12,72 @@ namespace ModTool.Exporting.Editor {
         /// The Mod's unique identifier.
         /// </summary>
         public static string id {
-            get { return instance._id; }
-            set { instance._id = value; }
+            get => instance._id;
+            set => instance._id = value;
         }
         
         /// <summary>
         /// The Mod's name.
         /// </summary>
         public new static string name {
-            get { return instance._name; }
-            set { instance._name = value; }
+            get => instance._name;
+            set => instance._name = value;
         }
 
         /// <summary>
         /// The Mod's author.
         /// </summary>
         public static string author {
-            get { return instance._author; }
-            set { instance._author = value; }
+            get => instance._author;
+            set => instance._author = value;
         }
 
         /// <summary>
         /// The Mod's description.
         /// </summary>
         public static string description {
-            get { return instance._description; }
-            set { instance._description = value; }
+            get => instance._description;
+            set => instance._description = value;
         }
 
         /// <summary>
         /// The Mod's version.
         /// </summary>
         public static string version {
-            get { return instance._version; }
-            set { instance._version = value; }
+            get => instance._version;
+            set => instance._version = value;
         }
 
         /// <summary>
         /// The selected platforms for which this mod will be exported.
         /// </summary>
         public static ModPlatform platforms {
-            get { return instance._platforms; }
-            set { instance._platforms = value; }
+            get => instance._platforms;
+            set => instance._platforms = value;
         }
 
         /// <summary>
         /// The selected content types that will be exported.
         /// </summary>
         public static ModContent content {
-            get { return instance._content; }
-            set { instance._content = value; }
+            get => instance._content;
+            set => instance._content = value;
         }
 
         /// <summary>
         /// The directory to which the Mod will be exported.
         /// </summary>
         public static string outputDirectory {
-            get { return instance._outputDirectory; }
-            set { instance._outputDirectory = value; }
+            get => instance._outputDirectory;
+            set => instance._outputDirectory = value;
+        }
+        
+        /// <summary>
+        /// The Mod dependencies
+        /// </summary>
+        public static List<Dependency> dependencies {
+            get => instance._dependencies;
+            set => instance._dependencies = value;
         }
 
         [SerializeField] private string _id;
@@ -86,5 +95,7 @@ namespace ModTool.Exporting.Editor {
         [SerializeField] private ModContent _content = (ModContent) (-1);
 
         [SerializeField] private string _outputDirectory;
+        
+        [SerializeField] private List<Dependency> _dependencies;
     }
 }

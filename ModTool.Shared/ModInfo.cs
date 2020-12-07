@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -79,6 +80,8 @@ namespace ModTool.Shared {
 
         [SerializeField] private bool _isEnabled;
 
+        [SerializeField] private List<Dependency> _dependencies;
+
         /// <summary>
         /// Initialize a new ModInfo.
         /// </summary>
@@ -90,6 +93,7 @@ namespace ModTool.Shared {
         /// <param name="content">The Mod's available content types.</param>
         /// <param name="version">The Mod's version</param>
         /// <param name="unityVersion"> The version of Unity that the Mod was exported with.</param>
+        /// <param name="dependencies"> The Mod dependencies.</param>
         public ModInfo(
             string id,
             string name,
@@ -98,7 +102,8 @@ namespace ModTool.Shared {
             string version,
             string unityVersion,
             ModPlatform platforms,
-            ModContent content) {
+            ModContent content,
+            List<Dependency> dependencies) {
             _author = author;
             _description = description;
             _name = name;
@@ -107,6 +112,7 @@ namespace ModTool.Shared {
             _content = content;
             _version = version;
             _unityVersion = unityVersion;
+            _dependencies = dependencies;
 
             isEnabled = false;
         }
@@ -154,5 +160,10 @@ namespace ModTool.Shared {
 
             return null;
         }
+    }
+
+    [Serializable]
+    public class Dependency {
+        public string Id;
     }
 }

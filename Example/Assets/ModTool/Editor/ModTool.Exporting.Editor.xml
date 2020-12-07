@@ -81,6 +81,11 @@
             The directory to which the Mod will be exported.
             </summary>
         </member>
+        <member name="P:ModTool.Exporting.Editor.ExportSettings.dependencies">
+            <summary>
+            The Mod dependencies
+            </summary>
+        </member>
         <member name="T:ModTool.Exporting.Editor.ModExporter">
             <summary>
             Main class for exporting a project as a mod.

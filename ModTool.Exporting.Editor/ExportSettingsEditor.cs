@@ -13,6 +13,7 @@ namespace ModTool.Exporting.Editor {
         private SerializedProperty _platforms;
         private SerializedProperty _content;
         private SerializedProperty _outputDirectory;
+        private SerializedProperty _dependencies;
 
         private FilteredEnumMaskField platforms;
         private FilteredEnumMaskField content;
@@ -26,6 +27,7 @@ namespace ModTool.Exporting.Editor {
             _platforms = serializedObject.FindProperty("_platforms");
             _content = serializedObject.FindProperty("_content");
             _outputDirectory = serializedObject.FindProperty("_outputDirectory");
+            _dependencies = serializedObject.FindProperty("_dependencies");
 
             platforms = new FilteredEnumMaskField(typeof(ModPlatform), (int) ModToolSettings.supportedPlatforms);
             content = new FilteredEnumMaskField(typeof(ModContent), (int) ModToolSettings.supportedContent);
@@ -50,6 +52,8 @@ namespace ModTool.Exporting.Editor {
             _platforms.intValue = platforms.DoMaskField("Platforms*:", _platforms.intValue);
             _content.intValue = content.DoMaskField("Content*:", _content.intValue);
             LogUtility.logLevel = (LogLevel) EditorGUILayout.EnumPopup("Log Level:", LogUtility.logLevel);
+            
+            EditorGUILayout.PropertyField(_dependencies, new GUIContent("Dependencies:"));
 
             var enabled = GUI.enabled;
 

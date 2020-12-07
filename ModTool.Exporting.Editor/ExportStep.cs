@@ -407,7 +407,8 @@ namespace ModTool.Exporting.Editor {
                 ExportSettings.version,
                 Application.unityVersion,
                 platforms,
-                data.content);
+                data.content,
+                ExportSettings.dependencies);
 
             ModInfo.Save(Path.Combine(tempModDirectory, ExportSettings.id + ".info"), modInfo);
 
