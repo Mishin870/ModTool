@@ -62,8 +62,13 @@ namespace ModTool.Shared {
         /// </summary>
         public string path { get; private set; }
 
+        /// <summary>
+        /// Dependencies of mod
+        /// </summary>
+        public List<Dependency> dependencies => _dependencies;
+
         [SerializeField] private string _id;
-        
+
         [SerializeField] private string _name;
 
         [SerializeField] private string _author;

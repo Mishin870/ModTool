@@ -13,7 +13,7 @@ namespace ModTool {
     /// Main class for finding mods
     /// </summary>
     public class ModManager : UnitySingleton<ModManager> {
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         /// <summary>
         /// Occurs when the collection of Mods has changed.
@@ -70,7 +70,7 @@ namespace ModTool {
         /// Set to 0 to disable auto refreshing.
         /// </summary>
         public int refreshInterval {
-            get { return _refreshInterval; }
+            get => _refreshInterval;
             set {
                 _refreshInterval = value;
 
@@ -266,15 +266,18 @@ namespace ModTool {
             LogUtility.LogInfo("Mod found: " + mod.name + " - " + mod.contentType);
             _mods.Add(mod);
 
+            var Projection = ProjectIdToMods(_mods);
+            foreach (var SomeMod in _mods) {
+                SomeMod.UpdateDependencies(_mods, Projection);
+            }
+
             ModFound?.Invoke(mod);
             ModsChanged?.Invoke();
         }
 
         private void RemoveMod(string path) {
             lock (_lock) {
-                Mod mod;
-
-                if (_modPaths.TryGetValue(path, out mod)) {
+                if (_modPaths.TryGetValue(path, out var mod)) {
                     if (mod.loadState != ResourceLoadState.Unloaded) {
                         dispatcher.Enqueue(() => QueueModRefresh(mod));
                         return;
@@ -302,6 +305,11 @@ namespace ModTool {
             LogUtility.LogInfo("Mod removed: " + mod.name);
             _mods.Remove(mod);
 
+            var Projection = ProjectIdToMods(_mods);
+            foreach (var SomeMod in _mods) {
+                SomeMod.UpdateDependencies(_mods, Projection);
+            }
+
             ModRemoved?.Invoke(mod);
             ModsChanged?.Invoke();
         }
@@ -319,6 +327,10 @@ namespace ModTool {
             }
 
             base.OnDestroy();
+        }
+
+        private Dictionary<string, Mod> ProjectIdToMods(IEnumerable<Mod> Mods) {
+            return Mods.ToDictionary(Mod => Mod.modInfo.id);
         }
     }
 }

@@ -85,7 +85,7 @@ namespace ModTool {
         public override bool canLoad {
             get {
                 CheckResources();
-                return !ConflictingModsLoaded() && isValid;
+                return AllDependenciesSatisfied() && !ConflictingModsLoaded() && isValid;
             }
         }
 
@@ -93,7 +93,7 @@ namespace ModTool {
         /// Set the mod to be enabled or disabled
         /// </summary>
         public bool isEnabled {
-            get { return modInfo.isEnabled; }
+            get => modInfo.isEnabled;
             set {
                 modInfo.isEnabled = value;
                 modInfo.Save();
@@ -122,6 +122,10 @@ namespace ModTool {
         private List<Mod> _conflictingMods;
         private List<ModScene> _scenes;
         private List<GameObject> _prefabs;
+        
+        private List<Dependency> _dependencies;
+        private List<Dependency> _unsatisfiedDependencies;
+        private List<Mod> _foundDependencies;
 
         private Dictionary<Type, object> allInstances;
 
@@ -154,6 +158,10 @@ namespace ModTool {
         }
 
         private void Initialize() {
+            _dependencies = modInfo.dependencies;
+            _unsatisfiedDependencies = new List<Dependency>();
+            _foundDependencies = new List<Mod>();
+            
             allInstances = new Dictionary<Type, object>();
             assemblies = new List<Assembly>();
             _prefabs = new List<GameObject>();
@@ -630,6 +638,68 @@ namespace ModTool {
             }
 
             return components.ToArray();
+        }
+
+        public void UpdateDependencies(List<Mod> Mods, Dictionary<string, Mod> Projection) {
+            _foundDependencies.Clear();
+            _unsatisfiedDependencies.Clear();
+            
+            var PreUnsatisfied = new List<Dependency>(_dependencies);
+
+            foreach (var Pre in PreUnsatisfied) {
+                if (Projection.ContainsKey(Pre.Id)) {
+                    _foundDependencies.Add(Projection[Pre.Id]);
+                } else {
+                    _unsatisfiedDependencies.Add(Pre);
+                }
+            }
+        }
+        
+        private bool AllDependenciesSatisfied() {
+            var ModId = modInfo.id;
+
+            if (_unsatisfiedDependencies.Count > 0) {
+                foreach (var Dependency in _unsatisfiedDependencies) {
+                    LogUtility.LogError($"Not satisfied dependency: \"{Dependency.Id}\" " +
+                                        $"for mod: \"{ModId}\"");                    
+                }
+
+                return false;
+            }
+            
+            var Required = _foundDependencies
+                .Where(FoundDependency => !FoundDependency.isEnabled)
+                .Select(FoundDependency => FoundDependency.modInfo.id)
+                .ToList();
+
+            if (Required.Count > 0) {
+                foreach (var Dependency in Required) {
+                    LogUtility.LogError($"Not enabled dependency: \"{Dependency}\" " +
+                                        $"for mod: \"{ModId}\"");                    
+                }
+            }
+
+            return true;
+        }
+
+        public DependenciesResult BrokenDependencies() {
+            var NotEnabled = _foundDependencies
+                .Where(FoundDependency => !FoundDependency.isEnabled)
+                .ToList();
+
+            return new DependenciesResult {
+                NotEnabled = NotEnabled,
+                NotFound = _unsatisfiedDependencies
+            };
+        }
+    }
+
+    public class DependenciesResult {
+        public List<Dependency> NotFound { get; set; }
+        public List<Mod> NotEnabled { get; set; }
+
+        public bool IsAllFine() {
+            return NotFound.Count == 0 && NotEnabled.Count == 0;
         }
     }
 }

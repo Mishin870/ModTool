@@ -430,6 +430,11 @@
             Location of mod
             </summary>
         </member>
+        <member name="P:ModTool.Shared.ModInfo.dependencies">
+            <summary>
+            Dependencies of mod
+            </summary>
+        </member>
         <member name="M:ModTool.Shared.ModInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,ModTool.Shared.ModPlatform,ModTool.Shared.ModContent,System.Collections.Generic.List{ModTool.Shared.Dependency})">
             <summary>
             Initialize a new ModInfo.
